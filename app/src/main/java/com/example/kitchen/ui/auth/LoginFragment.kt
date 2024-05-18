@@ -6,15 +6,23 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.lifecycleScope
 import com.example.kitchen.AuthActivity
 import com.example.kitchen.MainActivity
 import com.example.kitchen.R
 import com.example.kitchen.databinding.FragmentHomeBinding
 import com.example.kitchen.databinding.FragmentLoginBinding
+import com.example.kitchen.models.User
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.postgrest.from
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.ArrayList
 
 class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
@@ -33,7 +41,29 @@ class LoginFragment : Fragment() {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
 
         binding.buttonLogAuth.setOnClickListener {
-            toMainActivity()
+            var users: List<User> = listOf()
+            val typedLogin = binding.etLogLogin.text
+            val typedPassword = binding.etLogPassword.text
+
+            lifecycleScope.launch { users = supabase.from("Users").select{
+                        filter {
+                            eq("Login", typedLogin)
+                        }
+                    }.decodeList<User>()
+            }.invokeOnCompletion {
+                if (users.count() == 0){
+                    Toast.makeText(activity,"Пользователь не найден!",Toast.LENGTH_SHORT).show()
+                }
+                else{
+                    val user: User = users[0]
+
+                    if (user.Password.equals(typedPassword))
+                        toMainActivity()
+                    else
+                        Toast.makeText(activity,"Неверные данные!",Toast.LENGTH_SHORT).show()
+
+                }
+            }
         }
 
         binding.buttonLogReg.setOnClickListener {

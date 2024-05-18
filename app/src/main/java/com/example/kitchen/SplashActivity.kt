@@ -21,9 +21,9 @@ class SplashActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.ivLogo.alpha = 0f
-        binding.ivLogo.scaleX = 0.7f
-        binding.ivLogo.scaleY = 0.7f
-        binding.ivLogo.animate().setDuration(2000).alpha(1f ).scaleX(1f).scaleY(1f).withEndAction {
+        binding.ivLogo.scaleX = 0.8f
+        binding.ivLogo.scaleY = 0.8f
+        binding.ivLogo.animate().setDuration(1500).alpha(1f ).scaleX(1f).scaleY(1f).withEndAction {
             val i = Intent(this, AuthActivity::class.java)
 
             startActivity(i)
