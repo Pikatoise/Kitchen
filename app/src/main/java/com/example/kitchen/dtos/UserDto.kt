@@ -1,12 +1,10 @@
-package com.example.kitchen.models
+package com.example.kitchen.dtos
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class User(
-    @SerialName("Id")
-    val id: Int,
+data class UserDto(
     @SerialName("Login")
     val login: String,
     @SerialName("Password")

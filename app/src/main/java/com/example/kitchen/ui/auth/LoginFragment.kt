@@ -41,27 +41,20 @@ class LoginFragment : Fragment() {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
 
         binding.buttonLogAuth.setOnClickListener {
-            var users: List<User> = listOf()
-            val typedLogin = binding.etLogLogin.text
-            val typedPassword = binding.etLogPassword.text
+            var user: User? = null
+            val typedLogin = binding.etLogLogin.text.toString()
+            val typedPassword = binding.etLogPassword.text.toString()
 
-            lifecycleScope.launch { users = supabase.from("Users").select{
-                        filter {
-                            eq("Login", typedLogin)
-                        }
-                    }.decodeList<User>()
+            lifecycleScope.launch {
+                user = findUser(typedLogin)
             }.invokeOnCompletion {
-                if (users.count() == 0){
-                    Toast.makeText(activity,"Пользователь не найден!",Toast.LENGTH_SHORT).show()
-                }
+                if (user == null)
+                    Toast.makeText(activity, "Пользователь не найден!", Toast.LENGTH_SHORT).show()
                 else{
-                    val user: User = users[0]
-
-                    if (user.Password.equals(typedPassword))
+                    if (user!!.password.equals(typedPassword))
                         toMainActivity()
                     else
                         Toast.makeText(activity,"Неверные данные!",Toast.LENGTH_SHORT).show()
-
                 }
             }
         }
@@ -71,6 +64,16 @@ class LoginFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    suspend fun findUser(login: String): User{
+        return withContext(Dispatchers.IO){
+            supabase.from("Users").select{
+                filter {
+                    eq("Login", login)
+                }
+            }.decodeSingle<User>()
+        }
     }
 
     private fun toRegister(){
