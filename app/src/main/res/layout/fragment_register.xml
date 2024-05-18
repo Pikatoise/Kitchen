@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.auth.RegisterFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="85dp"
+        android:background="@drawable/shape_header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <ImageView
+            android:id="@+id/iv_reg_exit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_exit"
+            android:layout_marginStart="28dp"
+            android:layout_marginBottom="15dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <EditText
+        android:id="@+id/et_reg_login"
+        android:layout_width="320dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="260dp"
+        android:hint="Логин"
+        android:textSize="16dp"
+        android:background="@drawable/shape_rounded_stroke"
+        android:paddingHorizontal="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <EditText
+        android:id="@+id/et_reg_password"
+        android:layout_width="320dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="25dp"
+        android:hint="Пароль"
+        android:textSize="16dp"
+        android:inputType="textPassword"
+        android:background="@drawable/shape_rounded_stroke"
+        android:paddingHorizontal="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_reg_login"/>
+
+    <EditText
+        android:id="@+id/et_reg_password_confirm"
+        android:layout_width="320dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="25dp"
+        android:hint="Повторите пароль"
+        android:textSize="16dp"
+        android:inputType="textPassword"
+        android:background="@drawable/shape_rounded_stroke"
+        android:paddingHorizontal="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_reg_password"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_reg_register"
+        android:layout_width="320dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="50dp"
+        android:text="Создать аккаунт"
+        android:textSize="18dp"
+        android:textAllCaps="false"
+        android:outlineSpotShadowColor="@android:color/transparent"
+        android:background="@drawable/shape_rounded"
+        app:backgroundTint="@color/accent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_reg_password_confirm"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
