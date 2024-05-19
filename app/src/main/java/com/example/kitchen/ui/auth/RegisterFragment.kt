@@ -7,39 +7,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.FragmentTransaction
-import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.withCreated
 import com.example.kitchen.R
-import com.example.kitchen.databinding.FragmentLoginBinding
 import com.example.kitchen.databinding.FragmentRegisterBinding
-import com.example.kitchen.dtos.ProfileDto
-import com.example.kitchen.dtos.UserDto
 import com.example.kitchen.models.User
 import com.example.kitchen.supabase.SupabaseModule
 import com.example.kitchen.supabase.interfaces.UserRepository
 import com.example.kitchen.supabase.repositories.UserRepositoryImpl
-import io.github.jan.supabase.createSupabaseClient
-import io.github.jan.supabase.postgrest.Postgrest
-import io.github.jan.supabase.postgrest.from
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.future.future
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class RegisterFragment @Inject constructor() : Fragment() {
     private var _binding: FragmentRegisterBinding? = null
     private lateinit var userRepository: UserRepository
     private val binding get() = _binding!!
-
-//    val supabase = createSupabaseClient(
-//        supabaseUrl = "https://gkeqyqnfnwgcbpgbnxkq.supabase.co",
-//        supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdrZXF5cW5mbndnY2JwZ2JueGtxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTU5NDI3NjgsImV4cCI6MjAzMTUxODc2OH0.wkGX4ZbmEYC2A5ThtPJxe_f0xXpK0uFQ-7lP8n6hdPE"
-//    ) {
-//        install(Postgrest)
-//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -104,46 +85,6 @@ class RegisterFragment @Inject constructor() : Fragment() {
 
         return binding.root
     }
-
-//    suspend fun createProfile(userId: Int): Boolean{
-//        return try {
-//            withContext(Dispatchers.IO) {
-//                val profile = ProfileDto("name_${userId}","",userId)
-//
-//                supabase.from("Profiles").insert(profile)
-//
-//                true
-//            }
-//            true
-//        } catch (e: java.lang.Exception) {
-//            throw e
-//        }
-//    }
-//
-//    suspend fun createUser(login: String, password: String): Boolean{
-//        return try {
-//            withContext(Dispatchers.IO) {
-//                val user = UserDto(login,password)
-//
-//                supabase.from("Users").insert(user)
-//
-//                true
-//            }
-//            true
-//        } catch (e: java.lang.Exception) {
-//            throw e
-//        }
-//    }
-//
-//    suspend fun getUser(login: String): User?{
-//        return withContext(Dispatchers.IO){
-//            supabase.from("Users").select{
-//                filter {
-//                    eq("Login", login)
-//                }
-//            }.decodeSingleOrNull()
-//        }
-//    }
 
     private fun toLogin(){
         val transaction: FragmentTransaction = requireFragmentManager().beginTransaction()

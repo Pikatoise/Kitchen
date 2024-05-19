@@ -4,7 +4,6 @@ import com.example.kitchen.dtos.UserDto
 import com.example.kitchen.models.User
 import com.example.kitchen.supabase.interfaces.UserRepository
 import io.github.jan.supabase.postgrest.Postgrest
-import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -15,9 +14,9 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun createUser(user: User): Boolean {
         return try {
             withContext(Dispatchers.IO) {
-                val user = UserDto(user.login,user.password)
+                val newUserData = UserDto(user.login,user.password)
 
-                postgrest.from("Users").insert(user)
+                postgrest.from("Users").insert(newUserData)
 
                 true
             }
