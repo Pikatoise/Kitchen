@@ -36,6 +36,18 @@ class LoginFragment @Inject constructor() : Fragment() {
             val typedLogin = binding.etLogLogin.text.toString()
             val typedPassword = binding.etLogPassword.text.toString()
 
+            if (typedLogin.length == 0){
+                Toast.makeText(activity,"Введите логин!", Toast.LENGTH_SHORT).show()
+
+                return@setOnClickListener
+            }
+
+            if (typedPassword.length == 0){
+                Toast.makeText(activity,"Введите пароль!", Toast.LENGTH_SHORT).show()
+
+                return@setOnClickListener
+            }
+
             lifecycleScope.launch {
                 user = userRepository.getUserByLogin(typedLogin)
             }.invokeOnCompletion {
