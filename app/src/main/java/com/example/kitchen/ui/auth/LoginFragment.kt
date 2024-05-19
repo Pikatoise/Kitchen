@@ -16,6 +16,9 @@ import com.example.kitchen.R
 import com.example.kitchen.databinding.FragmentHomeBinding
 import com.example.kitchen.databinding.FragmentLoginBinding
 import com.example.kitchen.models.User
+import com.example.kitchen.supabase.SupabaseModule
+import com.example.kitchen.supabase.interfaces.UserRepository
+import com.example.kitchen.supabase.repositories.UserRepositoryImpl
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
@@ -23,21 +26,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.ArrayList
+import javax.inject.Inject
 
-class LoginFragment : Fragment() {
+class LoginFragment @Inject constructor() : Fragment() {
     private var _binding: FragmentLoginBinding? = null
+    private lateinit var userRepository: UserRepository
     private val binding get() = _binding!!
-
-    val supabase = createSupabaseClient(
-        supabaseUrl = "https://gkeqyqnfnwgcbpgbnxkq.supabase.co",
-        supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdrZXF5cW5mbndnY2JwZ2JueGtxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTU5NDI3NjgsImV4cCI6MjAzMTUxODc2OH0.wkGX4ZbmEYC2A5ThtPJxe_f0xXpK0uFQ-7lP8n6hdPE"
-    ) {
-        install(Postgrest)
-    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        userRepository = UserRepositoryImpl(SupabaseModule.provideSupabaseDatabase())
+
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
 
         binding.buttonLogAuth.setOnClickListener {
@@ -46,7 +46,7 @@ class LoginFragment : Fragment() {
             val typedPassword = binding.etLogPassword.text.toString()
 
             lifecycleScope.launch {
-                user = findUser(typedLogin)
+                user = userRepository.getUserByLogin(typedLogin)
             }.invokeOnCompletion {
                 if (user == null)
                     Toast.makeText(activity, "Пользователь не найден!", Toast.LENGTH_SHORT).show()
@@ -64,16 +64,6 @@ class LoginFragment : Fragment() {
         }
 
         return binding.root
-    }
-
-    suspend fun findUser(login: String): User{
-        return withContext(Dispatchers.IO){
-            supabase.from("Users").select{
-                filter {
-                    eq("Login", login)
-                }
-            }.decodeSingle<User>()
-        }
     }
 
     private fun toRegister(){

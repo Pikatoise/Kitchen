@@ -16,6 +16,9 @@ import com.example.kitchen.databinding.FragmentRegisterBinding
 import com.example.kitchen.dtos.ProfileDto
 import com.example.kitchen.dtos.UserDto
 import com.example.kitchen.models.User
+import com.example.kitchen.supabase.SupabaseModule
+import com.example.kitchen.supabase.interfaces.UserRepository
+import com.example.kitchen.supabase.repositories.UserRepositoryImpl
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
@@ -24,22 +27,26 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.future.future
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class RegisterFragment : Fragment() {
+class RegisterFragment @Inject constructor() : Fragment() {
     private var _binding: FragmentRegisterBinding? = null
+    private lateinit var userRepository: UserRepository
     private val binding get() = _binding!!
 
-    val supabase = createSupabaseClient(
-        supabaseUrl = "https://gkeqyqnfnwgcbpgbnxkq.supabase.co",
-        supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdrZXF5cW5mbndnY2JwZ2JueGtxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTU5NDI3NjgsImV4cCI6MjAzMTUxODc2OH0.wkGX4ZbmEYC2A5ThtPJxe_f0xXpK0uFQ-7lP8n6hdPE"
-    ) {
-        install(Postgrest)
-    }
+//    val supabase = createSupabaseClient(
+//        supabaseUrl = "https://gkeqyqnfnwgcbpgbnxkq.supabase.co",
+//        supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdrZXF5cW5mbndnY2JwZ2JueGtxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTU5NDI3NjgsImV4cCI6MjAzMTUxODc2OH0.wkGX4ZbmEYC2A5ThtPJxe_f0xXpK0uFQ-7lP8n6hdPE"
+//    ) {
+//        install(Postgrest)
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        userRepository = UserRepositoryImpl(SupabaseModule.provideSupabaseDatabase())
+
         _binding = FragmentRegisterBinding.inflate(inflater, container, false)
 
         binding.ivRegExit.setOnClickListener {
@@ -70,21 +77,22 @@ class RegisterFragment : Fragment() {
             }
 
             var user: User? = null
-            var count: Long? = null
             lifecycleScope.launch {
-                count = isUserExist(typedLogin)
+                user = userRepository.getUserByLogin(typedLogin)
             }.invokeOnCompletion {
-                if (count != null)
+                if (user != null)
                     Toast.makeText(activity, "Логин занят!", Toast.LENGTH_SHORT).show()
                 else {
                     lifecycleScope.launch {
-                        createUser(typedLogin,typedPassword)
+                        val newUser = User(-1, typedLogin, typedPassword)
+                        userRepository.createUser(newUser)
                     }.invokeOnCompletion {
                         lifecycleScope.launch {
-                            user = getUser(typedLogin)
+                            user = null
+                            user = userRepository.getUserByLogin(typedLogin)
                         }.invokeOnCompletion {
                             lifecycleScope.launch {
-                                createProfile(user!!.id)
+                                //createProfile(user!!.id)
                             }.invokeOnCompletion {
                                 toLogin()
                             }
@@ -97,55 +105,45 @@ class RegisterFragment : Fragment() {
         return binding.root
     }
 
-    suspend fun createProfile(userId: Int): Boolean{
-        return try {
-            withContext(Dispatchers.IO) {
-                val profile = ProfileDto("name_${userId}","",userId)
-
-                supabase.from("Profiles").insert(profile)
-
-                true
-            }
-            true
-        } catch (e: java.lang.Exception) {
-            throw e
-        }
-    }
-
-    suspend fun createUser(login: String, password: String): Boolean{
-        return try {
-            withContext(Dispatchers.IO) {
-                val user = UserDto(login,password)
-
-                supabase.from("Users").insert(user)
-
-                true
-            }
-            true
-        } catch (e: java.lang.Exception) {
-            throw e
-        }
-    }
-
-    suspend fun isUserExist(login: String): Long?{
-        return withContext(Dispatchers.IO){
-            supabase.from("Users").select{
-                filter {
-                    eq("Login", login)
-                }
-            }.countOrNull()
-        }
-    }
-
-    suspend fun getUser(login: String): User{
-        return withContext(Dispatchers.IO){
-            supabase.from("Users").select{
-                filter {
-                    eq("Login", login)
-                }
-            }.decodeSingle()
-        }
-    }
+//    suspend fun createProfile(userId: Int): Boolean{
+//        return try {
+//            withContext(Dispatchers.IO) {
+//                val profile = ProfileDto("name_${userId}","",userId)
+//
+//                supabase.from("Profiles").insert(profile)
+//
+//                true
+//            }
+//            true
+//        } catch (e: java.lang.Exception) {
+//            throw e
+//        }
+//    }
+//
+//    suspend fun createUser(login: String, password: String): Boolean{
+//        return try {
+//            withContext(Dispatchers.IO) {
+//                val user = UserDto(login,password)
+//
+//                supabase.from("Users").insert(user)
+//
+//                true
+//            }
+//            true
+//        } catch (e: java.lang.Exception) {
+//            throw e
+//        }
+//    }
+//
+//    suspend fun getUser(login: String): User?{
+//        return withContext(Dispatchers.IO){
+//            supabase.from("Users").select{
+//                filter {
+//                    eq("Login", login)
+//                }
+//            }.decodeSingleOrNull()
+//        }
+//    }
 
     private fun toLogin(){
         val transaction: FragmentTransaction = requireFragmentManager().beginTransaction()

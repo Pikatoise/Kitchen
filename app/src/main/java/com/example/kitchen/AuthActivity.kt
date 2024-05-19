@@ -7,6 +7,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.FragmentTransaction
 import com.example.kitchen.databinding.ActivityAuthBinding
+import com.example.kitchen.supabase.SupabaseModule
+import com.example.kitchen.supabase.repositories.UserRepositoryImpl
 import com.example.kitchen.ui.auth.LoginFragment
 import com.example.kitchen.ui.auth.RegisterFragment
 
@@ -16,6 +18,7 @@ class AuthActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        SupabaseModule.provideSupabaseDatabase().init()
 
         binding = ActivityAuthBinding.inflate(layoutInflater)
 

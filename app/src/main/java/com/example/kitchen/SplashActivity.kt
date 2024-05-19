@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.kitchen.databinding.ActivitySplashBinding
+import com.example.kitchen.supabase.SupabaseModule
 
 class SplashActivity : AppCompatActivity() {
 
