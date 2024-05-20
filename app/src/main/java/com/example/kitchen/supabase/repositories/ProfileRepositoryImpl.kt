@@ -22,6 +22,16 @@ class ProfileRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getProfile(id: Int): Profile? {
+        return withContext(Dispatchers.IO){
+            postgrest.from("Profiles").select{
+                filter {
+                    eq("Id", id)
+                }
+            }.decodeSingleOrNull()
+        }
+    }
+
     override suspend fun createUserProfile(userId: Int): Boolean {
         return try {
             withContext(Dispatchers.IO) {
