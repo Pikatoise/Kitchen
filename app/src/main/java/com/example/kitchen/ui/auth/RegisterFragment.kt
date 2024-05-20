@@ -1,5 +1,6 @@
 package com.example.kitchen.ui.auth
 
+import android.app.ProgressDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -61,12 +62,19 @@ class RegisterFragment @Inject constructor() : Fragment() {
                 return@setOnClickListener
             }
 
+            val progressDialog = ProgressDialog.show(activity, "", "")
+            progressDialog.show()
+            progressDialog.setContentView(R.layout.progress_dialog)
+            progressDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+
             var user: User? = null
             lifecycleScope.launch {
                 user = userRepository.getUserByLogin(typedLogin)
             }.invokeOnCompletion {
-                if (user != null)
+                if (user != null){
+                    progressDialog.dismiss()
                     Toast.makeText(activity, "Логин занят!", Toast.LENGTH_SHORT).show()
+                }
                 else {
                     lifecycleScope.launch {
                         val newUser = User(-1, typedLogin, typedPassword)
@@ -79,6 +87,7 @@ class RegisterFragment @Inject constructor() : Fragment() {
                             lifecycleScope.launch {
                                 profileRepository.createUserProfile(user!!.id)
                             }.invokeOnCompletion {
+                                progressDialog.dismiss()
                                 toLogin()
                             }
                         }

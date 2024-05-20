@@ -1,5 +1,6 @@
 package com.example.kitchen.ui.auth
 
+import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -54,11 +55,18 @@ class LoginFragment @Inject constructor() : Fragment() {
                 return@setOnClickListener
             }
 
+            val progressDialog = ProgressDialog.show(activity, "", "")
+            progressDialog.show()
+            progressDialog.setContentView(R.layout.progress_dialog)
+            progressDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+
             lifecycleScope.launch {
                 user = userRepository.getUserByLogin(typedLogin)
             }.invokeOnCompletion {
-                if (user == null)
+                if (user == null){
+                    progressDialog.dismiss()
                     Toast.makeText(activity, "Пользователь не найден!", Toast.LENGTH_SHORT).show()
+                }
                 else{
                     var profile: Profile? = null
 
@@ -67,17 +75,23 @@ class LoginFragment @Inject constructor() : Fragment() {
                             profile = profileRepository.getUserProfile(user!!.id)
                         }.invokeOnCompletion {
                             if (profile == null){
+                                progressDialog.dismiss()
                                 Toast.makeText(activity,"Ошибка. Профиль не найден!",Toast.LENGTH_SHORT).show()
                             }
                             else{
                                 PreferencesRepository(this.requireContext()).updateProfileId(profile!!.id)
 
+                                progressDialog.dismiss()
+
                                 toMainActivity()
                             }
                         }
                     }
-                    else
+                    else{
+                        progressDialog.dismiss()
+
                         Toast.makeText(activity,"Неверные данные!",Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
