@@ -12,7 +12,9 @@ import com.example.kitchen.R
 import com.example.kitchen.databinding.FragmentRegisterBinding
 import com.example.kitchen.models.User
 import com.example.kitchen.supabase.SupabaseModule
+import com.example.kitchen.supabase.interfaces.ProfileRepository
 import com.example.kitchen.supabase.interfaces.UserRepository
+import com.example.kitchen.supabase.repositories.ProfileRepositoryImpl
 import com.example.kitchen.supabase.repositories.UserRepositoryImpl
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,6 +22,7 @@ import javax.inject.Inject
 class RegisterFragment @Inject constructor() : Fragment() {
     private var _binding: FragmentRegisterBinding? = null
     private lateinit var userRepository: UserRepository
+    private lateinit var profileRepository: ProfileRepository
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -27,6 +30,7 @@ class RegisterFragment @Inject constructor() : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         userRepository = UserRepositoryImpl(SupabaseModule.provideSupabaseDatabase())
+        profileRepository = ProfileRepositoryImpl(SupabaseModule.provideSupabaseDatabase())
 
         _binding = FragmentRegisterBinding.inflate(inflater, container, false)
 
@@ -73,7 +77,7 @@ class RegisterFragment @Inject constructor() : Fragment() {
                             user = userRepository.getUserByLogin(typedLogin)
                         }.invokeOnCompletion {
                             lifecycleScope.launch {
-                                //createProfile(user!!.id)
+                                profileRepository.createUserProfile(user!!.id)
                             }.invokeOnCompletion {
                                 toLogin()
                             }
