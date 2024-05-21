@@ -1,7 +1,6 @@
 package com.example.kitchen.supabase.repositories
 
 import com.example.kitchen.dtos.ProfileDto
-import com.example.kitchen.dtos.UserDto
 import com.example.kitchen.models.Profile
 import com.example.kitchen.supabase.interfaces.ProfileRepository
 import io.github.jan.supabase.postgrest.Postgrest
