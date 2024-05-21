@@ -7,6 +7,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     app:cardCornerRadius="25dp"
+    android:layout_marginEnd="10dp"
+    android:layout_marginBottom="10dp"
     android:background="@drawable/shape_dish"
     app:cardElevation="0dp"
     app:strokeWidth="2dp"
@@ -23,7 +25,6 @@
             android:scaleType="centerCrop" />
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/mcv_dish_blured"
             android:layout_width="match_parent"
             android:layout_height="65dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -31,7 +32,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:cardCornerRadius="25dp"
             android:paddingHorizontal="24dp"
-            android:backgroundTint="@color/dishTransparent">
+            android:backgroundTint="@color/dishTransparent"
+            android:outlineSpotShadowColor="@android:color/transparent">
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

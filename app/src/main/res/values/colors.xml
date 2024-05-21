@@ -9,5 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="accent">#FFC521</color>
     <color name="main">#004241</color>
-    <color name="dishTransparent">#80004241</color>
+    <color name="main_inactive">#4D004241</color>
+    <color name="dishTransparent">#BF004241</color>
 </resources>
