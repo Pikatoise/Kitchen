@@ -1,32 +1,24 @@
-package com.example.kitchen
+package com.example.kitchen.activities
 
-import android.content.res.ColorStateList
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View.INVISIBLE
-import android.widget.Button
 import androidx.activity.enableEdgeToEdge
-import androidx.annotation.NonNull
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
+import com.example.kitchen.R
 import com.example.kitchen.databinding.ActivityMainBinding
 import com.example.kitchen.ui.home.HomeFragment
 import com.example.kitchen.ui.profile.ProfileFragment
 import com.example.kitchen.ui.search.SearchFragment
-import com.google.android.material.navigation.NavigationView.OnNavigationItemSelectedListener
 import com.google.android.material.navigation.NavigationView.VISIBLE
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private var currentFragmentId: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,25 +30,40 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.bgButtonHome.setOnClickListener {
+            if (currentFragmentId == R.id.button_home)
+                return@setOnClickListener
+
+            currentFragmentId = R.id.button_home
+
             navigationChange(R.id.button_home)
 
             loadFragment(HomeFragment(), false)
         }
 
         binding.bgButtonSearch.setOnClickListener {
+            if (currentFragmentId == R.id.button_search)
+                return@setOnClickListener
+
+            currentFragmentId = R.id.button_search
+
             navigationChange(R.id.button_search)
 
             loadFragment(SearchFragment(), false)
         }
 
         binding.bgButtonProfile.setOnClickListener {
+            if (currentFragmentId == R.id.button_profile)
+                return@setOnClickListener
+
+            currentFragmentId = R.id.button_profile
+
             navigationChange(R.id.button_profile)
 
             loadFragment(ProfileFragment(), false)
         }
 
+        currentFragmentId = R.id.button_home
         loadFragment(HomeFragment(), true)
-
     }
 
     private fun navigationChange(buttonId: Int){

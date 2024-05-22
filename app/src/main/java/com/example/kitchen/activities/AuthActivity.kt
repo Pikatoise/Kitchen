@@ -1,9 +1,10 @@
-package com.example.kitchen
+package com.example.kitchen.activities
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentTransaction
+import com.example.kitchen.R
 import com.example.kitchen.databinding.ActivityAuthBinding
 import com.example.kitchen.supabase.SupabaseModule
 import com.example.kitchen.ui.auth.LoginFragment

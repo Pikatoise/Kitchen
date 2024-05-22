@@ -49,7 +49,7 @@
             app:layout_constraintStart_toStartOf="parent"/>
 
         <TextView
-            android:id="@+id/tv_home_random_isEmpty"
+            android:id="@+id/tv_home_random_loading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Загрузка.."
@@ -87,19 +87,18 @@
             app:layout_constraintStart_toStartOf="parent"/>
 
         <TextView
-            android:id="@+id/tv_new_dishes_all"
+            android:id="@+id/tv_home_all_dishes"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:text="@string/see_all"
+            android:text="Посмотреть все"
             android:layout_marginTop="290dp"
             android:textSize="16sp"
-            android:textStyle="italic"
             android:textColor="@color/accent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@id/tv_new_dishes" />
 
         <TextView
-            android:id="@+id/tv_home_new_isEmpty"
+            android:id="@+id/tv_home_new_loading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Загрузка.."

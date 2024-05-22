@@ -1,5 +1,6 @@
 package com.example.kitchen.ui.home
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,6 +11,8 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.example.kitchen.activities.AllDishesActivity
+import com.example.kitchen.activities.MainActivity
 import com.example.kitchen.databinding.FragmentHomeBinding
 import com.example.kitchen.lists.DishesAdapter
 import com.example.kitchen.lists.CirclePagerIndicatorDecoration
@@ -43,20 +46,26 @@ class HomeFragment : Fragment() {
 
         loadRandomDishes { dishes, likes ->
             if (dishes.count() == 0)
-                binding.tvHomeRandomIsEmpty.visibility = VISIBLE
+                binding.tvHomeRandomLoading.visibility = VISIBLE
             else
-                binding.tvHomeRandomIsEmpty.visibility = INVISIBLE
+                binding.tvHomeRandomLoading.visibility = INVISIBLE
 
             binding.rvHomeRandomDishes.adapter = DishesAdapter(dishes, likes)
         }
 
         loadNewDish { dishes, likes ->
             if (dishes.count() == 0)
-                binding.tvHomeNewIsEmpty.visibility = VISIBLE
+                binding.tvHomeNewLoading.visibility = VISIBLE
             else
-                binding.tvHomeNewIsEmpty.visibility = INVISIBLE
+                binding.tvHomeNewLoading.visibility = INVISIBLE
 
             binding.rvHomeNewDishes.adapter = DishesAdapter(dishes, likes)
+        }
+
+        binding.tvHomeAllDishes.setOnClickListener {
+            val i = Intent(this.requireContext(), AllDishesActivity::class.java)
+
+            startActivity(i)
         }
 
         return binding.root
@@ -85,7 +94,8 @@ class HomeFragment : Fragment() {
                     }.invokeOnCompletion {
                         likesCounts.add(likes.count())
 
-                        callBack(dishes,likesCounts)
+                        if (likesCounts.count() == dishes.count())
+                            callBack(dishes,likesCounts)
                     }
                 }
 
@@ -108,7 +118,8 @@ class HomeFragment : Fragment() {
                     }.invokeOnCompletion {
                         likesCounts.add(likes.count())
 
-                        callBack(dishes,likesCounts)
+                        if (likesCounts.count() == dishes.count())
+                            callBack(dishes,likesCounts)
                     }
                 }
             }

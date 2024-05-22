@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
-import com.example.kitchen.MainActivity
+import com.example.kitchen.activities.MainActivity
 import com.example.kitchen.R
 import com.example.kitchen.databinding.FragmentLoginBinding
 import com.example.kitchen.models.Profile

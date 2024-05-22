@@ -6,9 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.kitchen.AuthActivity
-import com.example.kitchen.R
-import com.example.kitchen.databinding.FragmentHomeBinding
+import com.example.kitchen.activities.AuthActivity
 import com.example.kitchen.databinding.FragmentProfileBinding
 import com.example.kitchen.sqlite.PreferencesRepository
 

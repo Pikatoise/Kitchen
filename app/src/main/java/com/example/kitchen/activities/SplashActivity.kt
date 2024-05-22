@@ -1,4 +1,4 @@
-package com.example.kitchen
+package com.example.kitchen.activities
 
 import android.content.Intent
 import android.os.Bundle
