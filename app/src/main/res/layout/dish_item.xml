@@ -17,16 +17,34 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/accent">
+            <TextView
+                android:id="@+id/tv_dish_preview_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Б"
+                android:textSize="40sp"
+                android:textColor="@color/white"
+                android:layout_marginBottom="20dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <ImageView
             android:id="@+id/iv_dish_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/test_dish"
+            tools:src="@drawable/test_dish"
             android:scaleType="centerCrop" />
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="65dp"
+            android:layout_height="75dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -46,7 +64,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="Название"
                     android:textSize="16sp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="5dp"
                     android:textColor="@color/white"/>
 
                 <ImageView
