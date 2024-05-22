@@ -32,7 +32,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:paddingHorizontal="55dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="15dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cl_home_header"
@@ -44,7 +44,6 @@
             android:text="Подборка блюд"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:layout_marginBottom="21dp"
             android:textColor="@color/black"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
@@ -66,12 +65,62 @@
             android:id="@+id/rv_home_random_dishes"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_random_dishes"
             app:layout_constraintEnd_toEndOf="parent"
             tools:listitem="@layout/dish_item"
             tools:itemCount="2"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:orientation="horizontal"/>
+
+        <TextView
+            android:id="@+id/tv_new_dishes"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Новые"
+            android:layout_marginTop="290dp"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            app:layout_constraintTop_toBottomOf="@id/tv_random_dishes"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:id="@+id/tv_new_dishes_all"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="@string/see_all"
+            android:layout_marginTop="290dp"
+            android:textSize="16sp"
+            android:textStyle="italic"
+            android:textColor="@color/accent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/tv_new_dishes" />
+
+        <TextView
+            android:id="@+id/tv_home_new_isEmpty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Загрузка.."
+            android:visibility="visible"
+            android:layout_marginTop="100dp"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/rv_home_new_dishes"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_home_new_dishes"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_new_dishes"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:listitem="@layout/dish_item"
+            tools:itemCount="1"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:orientation="horizontal"/>
     </androidx.constraintlayout.widget.ConstraintLayout>

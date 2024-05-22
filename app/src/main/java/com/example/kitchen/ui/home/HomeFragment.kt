@@ -37,7 +37,7 @@ class HomeFragment : Fragment() {
         dishRepository = DishRepositoryImpl(SupabaseModule.provideSupabaseDatabase())
         likeRepository = LikeRepositoryImpl(SupabaseModule.provideSupabaseDatabase())
 
-        profileId = PreferencesRepository(this.requireContext()).getProfileId()
+        //profileId = PreferencesRepository(this.requireContext()).getProfileId()
 
         binding.rvHomeRandomDishes.addItemDecoration(CirclePagerIndicatorDecoration())
 
@@ -48,6 +48,15 @@ class HomeFragment : Fragment() {
                 binding.tvHomeRandomIsEmpty.visibility = INVISIBLE
 
             binding.rvHomeRandomDishes.adapter = DishesAdapter(dishes, likes)
+        }
+
+        loadNewDish { dishes, likes ->
+            if (dishes.count() == 0)
+                binding.tvHomeNewIsEmpty.visibility = VISIBLE
+            else
+                binding.tvHomeNewIsEmpty.visibility = INVISIBLE
+
+            binding.rvHomeNewDishes.adapter = DishesAdapter(dishes, likes)
         }
 
         return binding.root
@@ -102,6 +111,21 @@ class HomeFragment : Fragment() {
                         callBack(dishes,likesCounts)
                     }
                 }
+            }
+        }
+    }
+
+    private fun loadNewDish(callBack: (dishes: List<Dish>, likes: List<Int>) -> Unit){
+        var dish: Dish? = null
+        var likesCounts: List<Like> = listOf()
+
+        lifecycleScope.launch {
+            dish = dishRepository.getLastDish()
+        }.invokeOnCompletion {
+            lifecycleScope.launch {
+                likesCounts = likeRepository.getDishLikes(dish!!.id)
+            }.invokeOnCompletion {
+                callBack(List<Dish>(1) { dish!! }, List<Int>(1)  {likesCounts.count() })
             }
         }
     }
