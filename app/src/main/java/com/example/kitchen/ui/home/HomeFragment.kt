@@ -8,6 +8,7 @@ import android.view.View
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -42,15 +43,20 @@ class HomeFragment : Fragment() {
         dishRepository = DishRepositoryImpl(SupabaseModule.provideSupabaseDatabase())
         likeRepository = LikeRepositoryImpl(SupabaseModule.provideSupabaseDatabase())
 
+        requireActivity().window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+
         loadDishes().invokeOnCompletion {
-            if (dishes.count() == 0) {
+            if (dishes.isEmpty()) {
                 binding.tvHomeRandomLoading.visibility = VISIBLE
                 binding.tvHomeNewLoading.visibility = VISIBLE
+
+                return@invokeOnCompletion
             }
             else {
                 binding.tvHomeNewLoading.visibility = INVISIBLE
                 binding.tvHomeRandomLoading.visibility = INVISIBLE
             }
+
             val clickCallBack: (dishId: Int) -> Unit = {
                 val intent = Intent(this.requireContext(), DishActivity::class.java)
 
@@ -63,13 +69,16 @@ class HomeFragment : Fragment() {
                 binding.rvHomeRandomDishes.adapter = DishesAdapter(dishes, likes, clickCallBack)
 
                 binding.rvHomeRandomDishes.addItemDecoration(CirclePagerIndicatorDecoration())
+
+                requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
             }
 
             loadNewDish { dishes, likes ->
                 binding.rvHomeNewDishes.adapter = DishesAdapter(dishes, likes, clickCallBack)
+
+                requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
             }
         }
-
 
         binding.tvHomeAllDishes.setOnClickListener {
             val i = Intent(this.requireContext(), AllDishesActivity::class.java)
@@ -87,72 +96,59 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadRandomDishes(callBack: (dishes: List<Dish>, likes: List<Int>) -> Unit) {
-        var allDishes: MutableList<Dish> = arrayListOf()
         var selectedDishes: MutableList<Dish> = mutableListOf()
-        var dishes: MutableList<Dish> = mutableListOf()
-        var likesCounts: MutableList<Int> = mutableListOf()
+        var selectedDishesLikesCount: MutableList<Int> = mutableListOf()
 
-        lifecycleScope.launch {
-            allDishes = dishRepository.getAllDishes().toMutableList()
-        }.invokeOnCompletion {
-            if (allDishes.isEmpty())
-                return@invokeOnCompletion
+        if (dishes.count() <= 3) {
+            var dishLikes: List<Like> = listOf()
 
-            if (allDishes.count() <= 3) {
-                var likes: List<Like> = listOf()
+            dishes.forEach {
+                selectedDishes.add(it)
 
-                allDishes.forEach {
-                    dishes.add(it)
+                lifecycleScope.launch {
+                    dishLikes = likeRepository.getDishLikes(it.id)
+                }.invokeOnCompletion {
+                    selectedDishesLikesCount.add(dishLikes.count())
 
-                    lifecycleScope.launch {
-                        likes = likeRepository.getDishLikes(it.id)
-                    }.invokeOnCompletion {
-                        likesCounts.add(likes.count())
-
-                        if (likesCounts.count() == dishes.count())
-                            callBack(dishes,likesCounts)
-                    }
+                    if (selectedDishesLikesCount.count() == dishes.count())
+                        callBack(selectedDishes, selectedDishesLikesCount)
                 }
-
             }
-            else{
-                for(i in 0..2){
-                    val selectedDishIndex = (0..allDishes.count() - 1).random()
 
-                    selectedDishes.add(allDishes[selectedDishIndex])
+        }
+        else{
+            val dishesForPick = dishes.toMutableList()
 
-                    allDishes.removeAt(selectedDishIndex)
-                }
+            for(i in 0..2){
+                val selectedDishIndex = (0..dishesForPick.count() - 1).random()
 
-                var likes: List<Like> = listOf()
-                selectedDishes.forEach {
-                    dishes.add(it)
+                selectedDishes.add(dishesForPick[selectedDishIndex])
 
-                    lifecycleScope.launch {
-                        likes = likeRepository.getDishLikes(it.id)
-                    }.invokeOnCompletion {
-                        likesCounts.add(likes.count())
+                dishesForPick.removeAt(selectedDishIndex)
+            }
 
-                        if (likesCounts.count() == dishes.count())
-                            callBack(dishes,likesCounts)
-                    }
+            var likes: List<Like> = listOf()
+            selectedDishes.forEach {
+                lifecycleScope.launch {
+                    likes = likeRepository.getDishLikes(it.id)
+                }.invokeOnCompletion {
+                    selectedDishesLikesCount.add(likes.count())
+
+                    if (selectedDishesLikesCount.count() == selectedDishes.count())
+                        callBack(selectedDishes,selectedDishesLikesCount)
                 }
             }
         }
     }
 
     private fun loadNewDish(callBack: (dishes: List<Dish>, likes: List<Int>) -> Unit){
-        var dish: Dish? = null
+        var dish: Dish = dishes.last()
         var likesCounts: List<Like> = listOf()
 
         lifecycleScope.launch {
-            dish = dishRepository.getLastDish()
+            likesCounts = likeRepository.getDishLikes(dish.id)
         }.invokeOnCompletion {
-            lifecycleScope.launch {
-                likesCounts = likeRepository.getDishLikes(dish!!.id)
-            }.invokeOnCompletion {
-                callBack(List<Dish>(1) { dish!! }, List<Int>(1)  {likesCounts.count() })
-            }
+            callBack(List<Dish>(1) { dish }, List<Int>(1)  { likesCounts.count() })
         }
     }
 
