@@ -31,16 +31,12 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var dishRepository: DishRepository
     private lateinit var likeRepository: LikeRepository
-    private var profileId: Int = -1
 
-    @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         dishRepository = DishRepositoryImpl(SupabaseModule.provideSupabaseDatabase())
         likeRepository = LikeRepositoryImpl(SupabaseModule.provideSupabaseDatabase())
-
-        //profileId = PreferencesRepository(this.requireContext()).getProfileId()
 
         binding.rvHomeRandomDishes.addItemDecoration(CirclePagerIndicatorDecoration())
 

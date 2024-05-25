@@ -11,4 +11,6 @@
     <color name="main">#004241</color>
     <color name="main_inactive">#4D004241</color>
     <color name="dishTransparent">#BF004241</color>
+    <color name="likeUnActive">#BDBDBD</color>
+    <color name="likeActive">#FF4F4F</color>
 </resources>
