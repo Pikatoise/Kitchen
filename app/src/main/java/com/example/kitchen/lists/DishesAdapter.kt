@@ -28,13 +28,15 @@ import kotlin.math.min
 
 class DishesAdapter constructor(
     private val dishes: List<Dish>,
-    private val likesCount: List<Int>) : RecyclerView.Adapter<DishesAdapter.MyViewHolder>(){
+    private val likesCount: List<Int>,
+    private val clickCallback: (dishId: Int)-> Unit ) : RecyclerView.Adapter<DishesAdapter.MyViewHolder>(){
     class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         val imageView: ImageView = itemView.findViewById(R.id.iv_dish_image)
         val tvTitle: TextView = itemView.findViewById(R.id.tv_dish_title)
         val tvLikeCount: TextView = itemView.findViewById(R.id.tv_dish_like_count)
         val tvCookingTime: TextView = itemView.findViewById(R.id.tv_dish_cooking_time)
         val tvPreview: TextView = itemView.findViewById(R.id.tv_dish_preview_text)
+        val container: MaterialCardView = itemView.findViewById(R.id.mcv_dish_container)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -52,11 +54,16 @@ class DishesAdapter constructor(
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         if (dishes[position].image.isNotEmpty())
             DownloadImageTask(holder.imageView)
-                .execute("https://gkeqyqnfnwgcbpgbnxkq.supabase.co/storage/v1/object/public/kitchen_dish_image/${dishes[position].image}")
+                .execute(
+                    "https://gkeqyqnfnwgcbpgbnxkq.supabase.co/storage/v1/object/public/kitchen_dish_image/${dishes[position].image}"
+                )
 
         holder.tvTitle.text = dishes[position].name
         holder.tvLikeCount.text = likesCount[position].toString()
         holder.tvCookingTime.text = "${dishes[position].cookingTime} мин."
         holder.tvPreview.text = dishes[position].name[0].toString()
+        holder.container.setOnClickListener {
+            clickCallback(dishes[position].id)
+        }
     }
 }

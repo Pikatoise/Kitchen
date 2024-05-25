@@ -12,6 +12,7 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.kitchen.activities.AllDishesActivity
+import com.example.kitchen.activities.DishActivity
 import com.example.kitchen.activities.MainActivity
 import com.example.kitchen.databinding.FragmentHomeBinding
 import com.example.kitchen.lists.DishesAdapter
@@ -24,6 +25,8 @@ import com.example.kitchen.supabase.interfaces.DishRepository
 import com.example.kitchen.supabase.interfaces.LikeRepository
 import com.example.kitchen.supabase.repositories.DishRepositoryImpl
 import com.example.kitchen.supabase.repositories.LikeRepositoryImpl
+import kotlinx.coroutines.DisposableHandle
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
@@ -31,6 +34,7 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var dishRepository: DishRepository
     private lateinit var likeRepository: LikeRepository
+    private lateinit var dishes: List<Dish>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -38,25 +42,34 @@ class HomeFragment : Fragment() {
         dishRepository = DishRepositoryImpl(SupabaseModule.provideSupabaseDatabase())
         likeRepository = LikeRepositoryImpl(SupabaseModule.provideSupabaseDatabase())
 
-        binding.rvHomeRandomDishes.addItemDecoration(CirclePagerIndicatorDecoration())
-
-        loadRandomDishes { dishes, likes ->
-            if (dishes.count() == 0)
+        loadDishes().invokeOnCompletion {
+            if (dishes.count() == 0) {
                 binding.tvHomeRandomLoading.visibility = VISIBLE
-            else
-                binding.tvHomeRandomLoading.visibility = INVISIBLE
-
-            binding.rvHomeRandomDishes.adapter = DishesAdapter(dishes, likes)
-        }
-
-        loadNewDish { dishes, likes ->
-            if (dishes.count() == 0)
                 binding.tvHomeNewLoading.visibility = VISIBLE
-            else
+            }
+            else {
                 binding.tvHomeNewLoading.visibility = INVISIBLE
+                binding.tvHomeRandomLoading.visibility = INVISIBLE
+            }
+            val clickCallBack: (dishId: Int) -> Unit = {
+                val intent = Intent(this.requireContext(), DishActivity::class.java)
 
-            binding.rvHomeNewDishes.adapter = DishesAdapter(dishes, likes)
+                intent.putExtra("dishId", it)
+
+                startActivity(intent)
+            }
+
+            loadRandomDishes { dishes, likes ->
+                binding.rvHomeRandomDishes.adapter = DishesAdapter(dishes, likes, clickCallBack)
+
+                binding.rvHomeRandomDishes.addItemDecoration(CirclePagerIndicatorDecoration())
+            }
+
+            loadNewDish { dishes, likes ->
+                binding.rvHomeNewDishes.adapter = DishesAdapter(dishes, likes, clickCallBack)
+            }
         }
+
 
         binding.tvHomeAllDishes.setOnClickListener {
             val i = Intent(this.requireContext(), AllDishesActivity::class.java)
@@ -65,6 +78,12 @@ class HomeFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    private fun loadDishes(): Job{
+        return lifecycleScope.launch {
+            dishes = dishRepository.getAllDishes()
+        }
     }
 
     private fun loadRandomDishes(callBack: (dishes: List<Dish>, likes: List<Int>) -> Unit) {

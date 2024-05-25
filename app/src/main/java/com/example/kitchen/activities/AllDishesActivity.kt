@@ -1,5 +1,6 @@
 package com.example.kitchen.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
@@ -40,7 +41,13 @@ class AllDishesActivity : AppCompatActivity() {
             else
                 binding.tvAllDishesLoading.visibility = View.INVISIBLE
 
-            binding.rvAllDishes.adapter = DishesAdapter(dishes, likes)
+            binding.rvAllDishes.adapter = DishesAdapter(dishes, likes) {
+                val intent = Intent(this, DishActivity::class.java)
+
+                intent.putExtra("dishId", it)
+
+                startActivity(intent)
+            }
         }
 
         binding.ivAllDishesExit.setOnClickListener {
