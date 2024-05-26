@@ -20,4 +20,10 @@ class LikeRepositoryImpl @Inject constructor(
             }.decodeList<Like>()
         }
     }
+
+    override suspend fun getAllLikes(): List<Like> {
+        return withContext(Dispatchers.IO){
+            postgrest.from("Likes").select{}.decodeList<Like>()
+        }
+    }
 }

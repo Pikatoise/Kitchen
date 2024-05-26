@@ -106,6 +106,9 @@ class HomeFragment : Fragment() {
     private fun loadRandomDishes(callBack: (dishes: List<Dish>, likes: List<Int>) -> Unit) {
         var selectedDishes: MutableList<Dish> = mutableListOf()
         var selectedDishesLikesCount: MutableList<Int> = mutableListOf()
+        var firstDishLikesCount = 0
+        var secondDishLikesCount = 0
+        var thirdDishLikesCount = 0
 
         if (dishes.count() <= 3) {
             var dishLikes: List<Like> = listOf()
@@ -135,39 +138,54 @@ class HomeFragment : Fragment() {
                 dishesForPick.removeAt(selectedDishIndex)
             }
 
-            var likes: List<Like> = listOf()
-            selectedDishes.forEach {
-                lifecycleScope.launch {
-                    likes = likeRepository.getDishLikes(it.id)
-                }.invokeOnCompletion {
-                    selectedDishesLikesCount.add(likes.count())
+            lifecycleScope.launch {
+                firstDishLikesCount = likeRepository.getDishLikes(selectedDishes[0].id).count()
+                secondDishLikesCount = likeRepository.getDishLikes(selectedDishes[1].id).count()
+                thirdDishLikesCount = likeRepository.getDishLikes(selectedDishes[2].id).count()
+            }.invokeOnCompletion {
+                selectedDishesLikesCount.add(firstDishLikesCount)
+                selectedDishesLikesCount.add(secondDishLikesCount)
+                selectedDishesLikesCount.add(thirdDishLikesCount)
 
-                    if (selectedDishesLikesCount.count() == selectedDishes.count())
-                        callBack(selectedDishes,selectedDishesLikesCount)
-                }
+                callBack(selectedDishes,selectedDishesLikesCount)
             }
         }
     }
 
     private fun loadNewDish(callBack: (dishes: List<Dish>, likes: List<Int>) -> Unit){
         var dish: Dish = dishes.last()
-        var likesCounts: List<Like> = listOf()
+        var likes: List<Like> = listOf()
 
         lifecycleScope.launch {
-            likesCounts = likeRepository.getDishLikes(dish.id)
+            likes = likeRepository.getDishLikes(dish.id)
         }.invokeOnCompletion {
-            callBack(List<Dish>(1) { dish }, List<Int>(1)  { likesCounts.count() })
+            callBack(List<Dish>(1) { dish }, List<Int>(1)  { likes.count() })
         }
     }
 
     private fun loadPopularDish(callBack: (dishes: List<Dish>, likes: List<Int>) -> Unit) {
-        var dish: Dish = dishes.last()
-        var likesCounts: List<Like> = listOf()
+        var likes: List<Like> = listOf()
+        var dishesAndLikesCount: HashMap<Int, Int> = hashMapOf()
 
         lifecycleScope.launch {
-            likesCounts = likeRepository.getDishLikes(dish.id)
+            likes = likeRepository.getAllLikes()
         }.invokeOnCompletion {
-            callBack(List<Dish>(1) { dish }, List<Int>(1)  { likesCounts.count() })
+            likes.forEach {
+                if (dishesAndLikesCount.containsKey(it.dishId))
+                    dishesAndLikesCount[it.dishId] = dishesAndLikesCount[it.dishId]!! + 1
+                else
+                    dishesAndLikesCount.put(it.dishId, 1)
+            }
+
+            val popularestDish = dishesAndLikesCount.maxBy { x -> x.value }
+            var dish: Dish? = null
+            lifecycleScope.launch {
+                dish = dishRepository.getDish(popularestDish.key)
+            }.invokeOnCompletion {
+                if (dish != null)
+                    callBack(List<Dish>(1) { dish!! }, List<Int>(1)  { popularestDish.value })
+            }
+
         }
     }
 
