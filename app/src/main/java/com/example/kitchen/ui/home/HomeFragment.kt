@@ -49,12 +49,14 @@ class HomeFragment : Fragment() {
             if (dishes.isEmpty()) {
                 binding.tvHomeRandomLoading.visibility = VISIBLE
                 binding.tvHomeNewLoading.visibility = VISIBLE
+                binding.tvHomePopularLoading.visibility = VISIBLE
 
                 return@invokeOnCompletion
             }
             else {
                 binding.tvHomeNewLoading.visibility = INVISIBLE
                 binding.tvHomeRandomLoading.visibility = INVISIBLE
+                binding.tvHomePopularLoading.visibility = INVISIBLE
             }
 
             val clickCallBack: (dishId: Int) -> Unit = {
@@ -75,6 +77,12 @@ class HomeFragment : Fragment() {
 
             loadNewDish { dishes, likes ->
                 binding.rvHomeNewDishes.adapter = DishesAdapter(dishes, likes, clickCallBack)
+
+                requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+            }
+
+            loadPopularDish { dishes, likes ->
+                binding.rvHomePopularDishes.adapter = DishesAdapter(dishes, likes, clickCallBack)
 
                 requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
             }
@@ -142,6 +150,17 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadNewDish(callBack: (dishes: List<Dish>, likes: List<Int>) -> Unit){
+        var dish: Dish = dishes.last()
+        var likesCounts: List<Like> = listOf()
+
+        lifecycleScope.launch {
+            likesCounts = likeRepository.getDishLikes(dish.id)
+        }.invokeOnCompletion {
+            callBack(List<Dish>(1) { dish }, List<Int>(1)  { likesCounts.count() })
+        }
+    }
+
+    private fun loadPopularDish(callBack: (dishes: List<Dish>, likes: List<Int>) -> Unit) {
         var dish: Dish = dishes.last()
         var likesCounts: List<Like> = listOf()
 
