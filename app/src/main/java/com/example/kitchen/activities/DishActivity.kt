@@ -3,6 +3,7 @@ package com.example.kitchen.activities
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.ListView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -70,6 +71,64 @@ class DishActivity : AppCompatActivity() {
 
         binding.ivDishDetailedExit.setOnClickListener {
             finish()
+        }
+
+        binding.clDishDetailedLikeButton.setOnClickListener {
+            binding.clDishDetailedLikeButton.isClickable = false
+
+            var likeCount = binding.tvDishDetailedLikeCount.text.toString().toInt()
+
+            if (isLike){
+                isLike = false
+
+                likeCount -= 1
+
+                lifecycleScope.launch {
+                    likeRepository.removeDishLike(profileId, dishId)
+                }.invokeOnCompletion {
+                    binding.clDishDetailedLikeButton.isClickable = true
+                }
+            }
+            else{
+                isLike = true
+
+                likeCount += 1
+
+                lifecycleScope.launch {
+                    likeRepository.setDishLike(profileId, dishId)
+                }.invokeOnCompletion {
+                    binding.clDishDetailedLikeButton.isClickable = true
+                }
+            }
+
+            binding.tvDishDetailedLikeCount.text = likeCount.toString()
+
+            updateLikeStatus()
+        }
+
+        binding.clDishDetailedFavoriteButton.setOnClickListener {
+            binding.clDishDetailedFavoriteButton.isClickable = false
+
+            if (isFavorite){
+                isFavorite = false
+
+                lifecycleScope.launch {
+                    favoriteRepository.removeDishFavorite(profileId, dishId)
+                }.invokeOnCompletion {
+                    binding.clDishDetailedFavoriteButton.isClickable = true
+                }
+            }
+            else{
+                isFavorite = true
+
+                lifecycleScope.launch {
+                    favoriteRepository.setDishFavorite(profileId, dishId)
+                }.invokeOnCompletion {
+                    binding.clDishDetailedFavoriteButton.isClickable = true
+                }
+            }
+
+            updateFavoriteStatus()
         }
 
         setContentView(binding.root)
@@ -175,6 +234,8 @@ class DishActivity : AppCompatActivity() {
     }
 
     fun updateFavoriteStatus() {
+        Toast.makeText(this,isFavorite.toString(),Toast.LENGTH_LONG).show()
+
         if (isFavorite)
             binding.ivDishDetailedFavoriteImage.setImageResource(R.drawable.ic_favorite_checked)
         else

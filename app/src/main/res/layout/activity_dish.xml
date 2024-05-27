@@ -148,6 +148,7 @@
                         app:strokeWidth="2dp"
                         app:cardCornerRadius="100dp">
                         <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/cl_dish_detailed_like_button"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:paddingHorizontal="15dp">
@@ -183,6 +184,7 @@
                         app:strokeWidth="2dp"
                         app:cardCornerRadius="100dp">
                         <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/cl_dish_detailed_favorite_button"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
                             <ImageView
@@ -190,7 +192,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/ic_favorite"
-                                app:tint="@color/main"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
