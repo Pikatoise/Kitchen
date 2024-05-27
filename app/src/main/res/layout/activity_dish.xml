@@ -18,6 +18,23 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="420dp"
+                android:background="@color/accent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+                <TextView
+                    android:id="@+id/tv_dish_detailed_letter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="К"
+                    android:textColor="@color/white"
+                    android:textSize="76sp"
+                    android:layout_centerInParent="true"/>
+            </RelativeLayout>
+
             <ImageView
                 android:id="@+id/iv_dish_detailed_image"
                 android:layout_width="match_parent"
@@ -256,7 +273,7 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <TextView
-                    android:id="@+id/tv_dish_detailed_description"
+                    android:id="@+id/tv_dish_detailed_recipe"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
