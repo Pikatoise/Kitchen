@@ -59,21 +59,19 @@ class AllDishesActivity : AppCompatActivity() {
 
     private fun loadAllDishes(callback: (dishes: List<Dish>, likes: List<Int>) -> Unit){
         var allDishes: List<Dish> = arrayListOf()
-        var likesCounts: MutableList<Int> = mutableListOf()
+        var likesCounts: IntArray
 
         lifecycleScope.launch {
             allDishes = dishRepository.getAllDishes()
         }.invokeOnCompletion {
-            allDishes.forEach {
-                var likes: List<Like> = listOf()
+            likesCounts = IntArray(allDishes.count())
 
+            for(i in 0..allDishes.count() - 1){
                 lifecycleScope.launch {
-                    likes = likeRepository.getDishLikes(it.id)
+                    likesCounts[i] = likeRepository.getDishLikes(allDishes[i].id).count()
                 }.invokeOnCompletion {
-                    likesCounts.add(likes.count())
-
                     if (likesCounts.count() == allDishes.count())
-                        callback(allDishes,likesCounts)
+                        callback(allDishes, likesCounts.toList())
                 }
             }
         }
