@@ -13,17 +13,20 @@ import com.example.kitchen.R
 import com.example.kitchen.databinding.ActivityDishBinding
 import com.example.kitchen.lists.IngredientsAdapter
 import com.example.kitchen.models.Dish
+import com.example.kitchen.models.DishCategory
 import com.example.kitchen.models.Favorite
 import com.example.kitchen.models.Ingredient
 import com.example.kitchen.models.Like
 import com.example.kitchen.models.Profile
 import com.example.kitchen.sqlite.PreferencesRepository
 import com.example.kitchen.supabase.SupabaseModule
+import com.example.kitchen.supabase.interfaces.CategoryRepository
 import com.example.kitchen.supabase.interfaces.DishRepository
 import com.example.kitchen.supabase.interfaces.FavoriteRepository
 import com.example.kitchen.supabase.interfaces.IngredientRepository
 import com.example.kitchen.supabase.interfaces.LikeRepository
 import com.example.kitchen.supabase.interfaces.ProfileRepository
+import com.example.kitchen.supabase.repositories.CategoryRepositoryImpl
 import com.example.kitchen.supabase.repositories.DishRepositoryImpl
 import com.example.kitchen.supabase.repositories.FavoriteRepositoryImpl
 import com.example.kitchen.supabase.repositories.IngredientRepositoryImpl
@@ -40,6 +43,7 @@ class DishActivity : AppCompatActivity() {
     private lateinit var favoriteRepository: FavoriteRepository
     private lateinit var preferencesRepository: PreferencesRepository
     private lateinit var ingredientRepository: IngredientRepository
+    private lateinit var categoryRepository: CategoryRepository
     private var profileId: Int = -1
     private var dishId: Int = -1
     private var isLike: Boolean = false
@@ -57,6 +61,7 @@ class DishActivity : AppCompatActivity() {
         likeRepository = LikeRepositoryImpl(provider)
         favoriteRepository = FavoriteRepositoryImpl(provider)
         ingredientRepository = IngredientRepositoryImpl(provider)
+        categoryRepository = CategoryRepositoryImpl(provider)
         preferencesRepository = PreferencesRepository(this)
 
         profileId = preferencesRepository.getProfileId()
@@ -194,13 +199,20 @@ class DishActivity : AppCompatActivity() {
             fillIngredients()
 
             var dishLikes: List<Like> = listOf()
+            var dishCategory: DishCategory? = null
             var profile: Profile? = null
             var profileFavorites: List<Favorite> = listOf()
             lifecycleScope.launch {
                 dishLikes = likeRepository.getDishLikes(dish!!.id)
+                dishCategory = categoryRepository.getCategory(dish!!.categoryId)
                 profile = profileRepository.getProfile(profileId)
                 profileFavorites = favoriteRepository.getProfileFavorites(profileId)
             }.invokeOnCompletion {
+                if (dishCategory != null)
+                    binding.tvDishDetailedCategory.text = dishCategory!!.name
+                else
+                    binding.tvDishDetailedCategory.text = "Блюдо"
+
                 binding.tvDishDetailedNickLetter.text = profile!!.name[0].toString()
 
                 if (profile!!.avatar.isNotEmpty())
@@ -234,8 +246,6 @@ class DishActivity : AppCompatActivity() {
     }
 
     fun updateFavoriteStatus() {
-        Toast.makeText(this,isFavorite.toString(),Toast.LENGTH_LONG).show()
-
         if (isFavorite)
             binding.ivDishDetailedFavoriteImage.setImageResource(R.drawable.ic_favorite_checked)
         else

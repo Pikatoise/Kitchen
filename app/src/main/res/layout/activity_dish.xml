@@ -274,12 +274,24 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <TextView
+                    android:id="@+id/tv_dish_detailed_category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    tools:text="Выпечка"
+                    android:textSize="28sp"
+                    android:lineSpacingExtra="8dp"
+                    android:letterSpacing="0.01"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/mcv_dish_detailed_ingredient_container"/>
+
+                <TextView
                     android:id="@+id/tv_dish_detailed_recipe"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
+                    android:layout_marginTop="15dp"
                     android:paddingBottom="100dp"
-                    android:text="Человеческий организм получает почти все необходимые вещества именно через пищу и воду. С питанием связаны все жизненно важные функции организма. Недостаток полезных веществ, содержащихся в том же мясе, например железа высокой биологической доступности, может вызвать серьезные проблемы со здоровьем.
+                    tools:text="Человеческий организм получает почти все необходимые вещества именно через пищу и воду. С питанием связаны все жизненно важные функции организма. Недостаток полезных веществ, содержащихся в том же мясе, например железа высокой биологической доступности, может вызвать серьезные проблемы со здоровьем.
 Являясь одной из самых распространённых в мире сельскохозяйственных культур, рис занимает главенствующую позицию в национальной кухне сотен народов. В России до XIX века рис называли «сарацинское зерно». Более половины населения Земли питаются в основном именно рисом, что делает эту сельскохозяйственную культуру важнейшей на планете. В некоторых странах Азии из этого растения готовят такие напитки, как вино и пиво. Из рисовых зерён делают так называемую съедобную рисовую бумагу, применяемую в кондитерском деле."
                     android:textColor="@color/black"
                     android:textSize="18sp"
@@ -287,7 +299,7 @@
                     android:letterSpacing="0.01"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/mcv_dish_detailed_ingredient_container"/>
+                    app:layout_constraintTop_toBottomOf="@id/tv_dish_detailed_category"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
