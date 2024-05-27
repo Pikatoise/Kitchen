@@ -19,4 +19,11 @@ class CategoryRepositoryImpl @Inject constructor(
             }.decodeSingleOrNull()
         }
     }
+
+    override suspend fun getAllCategories(): List<DishCategory> {
+        return withContext(Dispatchers.IO){
+            postgrest.from("DishCategories").select()
+                .decodeList<DishCategory>()
+        }
+    }
 }
