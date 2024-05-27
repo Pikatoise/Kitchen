@@ -153,7 +153,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadNewDish(callBack: (dishes: List<Dish>, likes: List<Int>) -> Unit){
-        var dish: Dish = dishes.last()
+        var dish: Dish = dishes.maxBy { x -> x.id }
         var likes: List<Like> = listOf()
 
         lifecycleScope.launch {
