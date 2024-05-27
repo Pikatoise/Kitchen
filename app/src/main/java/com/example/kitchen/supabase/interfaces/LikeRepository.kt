@@ -6,4 +6,6 @@ interface LikeRepository{
     suspend fun getDishLikes(dishId: Int): List<Like>
 
     suspend fun getAllLikes(): List<Like>
+
+    suspend fun getProfileLikes(profileId: Int): List<Like>
 }

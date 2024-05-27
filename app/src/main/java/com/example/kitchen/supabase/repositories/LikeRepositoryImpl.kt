@@ -26,4 +26,14 @@ class LikeRepositoryImpl @Inject constructor(
             postgrest.from("Likes").select{}.decodeList<Like>()
         }
     }
+
+    override suspend fun getProfileLikes(profileId: Int): List<Like> {
+        return withContext(Dispatchers.IO){
+            postgrest.from("Likes").select{
+                filter {
+                    eq("ProfileId", profileId)
+                }
+            }.decodeList<Like>()
+        }
+    }
 }
