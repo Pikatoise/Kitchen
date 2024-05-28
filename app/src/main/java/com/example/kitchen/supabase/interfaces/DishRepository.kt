@@ -8,4 +8,6 @@ interface DishRepository {
     suspend fun getLastDish(): Dish?
 
     suspend fun getDish(id: Int): Dish?
+
+    suspend fun getProfileDishes(profileId: Int): List<Dish>
 }

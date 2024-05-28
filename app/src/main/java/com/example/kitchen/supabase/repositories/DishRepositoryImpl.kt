@@ -37,4 +37,15 @@ class DishRepositoryImpl @Inject constructor(
             }.decodeSingleOrNull()
         }
     }
+
+    override suspend fun getProfileDishes(profileId: Int): List<Dish> {
+        return withContext(Dispatchers.IO){
+            postgrest.from("Dishes").select{
+                filter {
+                    eq("ProfileId", profileId)
+                }
+                order(column = "Id", order = Order.DESCENDING)
+            }.decodeList<Dish>()
+        }
+    }
 }
