@@ -48,9 +48,10 @@ class SearchFragment constructor(private val onLoaded: () -> Unit) : Fragment() 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
 
-        dishRepository = DishRepositoryImpl(SupabaseModule.provideSupabaseDatabase())
-        categoryRepository = CategoryRepositoryImpl(SupabaseModule.provideSupabaseDatabase())
-        likeRepository = LikeRepositoryImpl(SupabaseModule.provideSupabaseDatabase())
+        val provider = SupabaseModule.provideSupabaseDatabase()
+        dishRepository = DishRepositoryImpl(provider)
+        categoryRepository = CategoryRepositoryImpl(provider)
+        likeRepository = LikeRepositoryImpl(provider)
 
         requireActivity().window.setFlags(
             WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
