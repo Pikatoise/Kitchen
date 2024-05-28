@@ -9,6 +9,7 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -30,69 +31,90 @@ import kotlinx.coroutines.DisposableHandle
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class HomeFragment : Fragment() {
+class HomeFragment constructor(private val onLoaded: () -> Unit) : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private lateinit var dishRepository: DishRepository
     private lateinit var likeRepository: LikeRepository
-    private lateinit var dishes: List<Dish>
+    private var dishes: List<Dish>? = null
+    private var loadedElements = 0
+    private var loadingElementsCount = 3;
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
-
-        dishRepository = DishRepositoryImpl(SupabaseModule.provideSupabaseDatabase())
-        likeRepository = LikeRepositoryImpl(SupabaseModule.provideSupabaseDatabase())
-
         requireActivity().window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+        loadedElements = 0
 
-        loadDishes().invokeOnCompletion {
-            if (dishes.isEmpty()) {
-                binding.tvHomeRandomLoading.visibility = VISIBLE
-                binding.tvHomeNewLoading.visibility = VISIBLE
-                binding.tvHomePopularLoading.visibility = VISIBLE
+            _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-                return@invokeOnCompletion
+            dishRepository = DishRepositoryImpl(SupabaseModule.provideSupabaseDatabase())
+            likeRepository = LikeRepositoryImpl(SupabaseModule.provideSupabaseDatabase())
+
+            loadDishes().invokeOnCompletion {
+                if (dishes == null)
+                    return@invokeOnCompletion
+
+                if (dishes!!.isEmpty()) {
+                    binding.tvHomeRandomLoading.visibility = VISIBLE
+                    binding.tvHomeNewLoading.visibility = VISIBLE
+                    binding.tvHomePopularLoading.visibility = VISIBLE
+
+                    return@invokeOnCompletion
+                }
+                else {
+                    binding.tvHomeNewLoading.visibility = INVISIBLE
+                    binding.tvHomeRandomLoading.visibility = INVISIBLE
+                    binding.tvHomePopularLoading.visibility = INVISIBLE
+                }
+
+                val clickCallBack: (dishId: Int) -> Unit = {
+                    val intent = Intent(this.requireContext(), DishActivity::class.java)
+
+                    intent.putExtra("dishId", it)
+
+                    startActivity(intent)
+                }
+
+                loadRandomDishes { dishes, likes ->
+                    binding.rvHomeRandomDishes.adapter = DishesAdapter(dishes, likes, clickCallBack)
+
+                    binding.rvHomeRandomDishes.addItemDecoration(CirclePagerIndicatorDecoration())
+
+                    loadedElements += 1
+
+                    if (loadedElements == loadingElementsCount){
+                        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                        onLoaded()
+                    }
+                }
+
+                loadNewDish { dishes, likes ->
+                    binding.rvHomeNewDishes.adapter = DishesAdapter(dishes, likes, clickCallBack)
+
+                    loadedElements += 1
+
+                    if (loadedElements == loadingElementsCount){
+                        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                        onLoaded()
+                    }
+                }
+
+                loadPopularDish { dishes, likes ->
+                    binding.rvHomePopularDishes.adapter = DishesAdapter(dishes, likes, clickCallBack)
+
+                    loadedElements += 1
+
+                    if (loadedElements == loadingElementsCount){
+                        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                        onLoaded()
+                    }
+                }
             }
-            else {
-                binding.tvHomeNewLoading.visibility = INVISIBLE
-                binding.tvHomeRandomLoading.visibility = INVISIBLE
-                binding.tvHomePopularLoading.visibility = INVISIBLE
+
+            binding.tvHomeAllDishes.setOnClickListener {
+                val i = Intent(this.requireContext(), AllDishesActivity::class.java)
+
+                startActivity(i)
             }
-
-            val clickCallBack: (dishId: Int) -> Unit = {
-                val intent = Intent(this.requireContext(), DishActivity::class.java)
-
-                intent.putExtra("dishId", it)
-
-                startActivity(intent)
-            }
-
-            loadRandomDishes { dishes, likes ->
-                binding.rvHomeRandomDishes.adapter = DishesAdapter(dishes, likes, clickCallBack)
-
-                binding.rvHomeRandomDishes.addItemDecoration(CirclePagerIndicatorDecoration())
-
-                requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-            }
-
-            loadNewDish { dishes, likes ->
-                binding.rvHomeNewDishes.adapter = DishesAdapter(dishes, likes, clickCallBack)
-
-                requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-            }
-
-            loadPopularDish { dishes, likes ->
-                binding.rvHomePopularDishes.adapter = DishesAdapter(dishes, likes, clickCallBack)
-
-                requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-            }
-        }
-
-        binding.tvHomeAllDishes.setOnClickListener {
-            val i = Intent(this.requireContext(), AllDishesActivity::class.java)
-
-            startActivity(i)
-        }
 
         return binding.root
     }
@@ -110,10 +132,10 @@ class HomeFragment : Fragment() {
         var secondDishLikesCount = 0
         var thirdDishLikesCount = 0
 
-        if (dishes.count() <= 3) {
+        if (dishes!!.count() <= 3) {
             var dishLikes: List<Like> = listOf()
 
-            dishes.forEach {
+            dishes!!.forEach {
                 selectedDishes.add(it)
 
                 lifecycleScope.launch {
@@ -121,14 +143,14 @@ class HomeFragment : Fragment() {
                 }.invokeOnCompletion {
                     selectedDishesLikesCount.add(dishLikes.count())
 
-                    if (selectedDishesLikesCount.count() == dishes.count())
+                    if (selectedDishesLikesCount.count() == dishes!!.count())
                         callBack(selectedDishes, selectedDishesLikesCount)
                 }
             }
 
         }
         else{
-            val dishesForPick = dishes.toMutableList()
+            val dishesForPick = dishes!!.toMutableList()
 
             for(i in 0..2){
                 val selectedDishIndex = (0..dishesForPick.count() - 1).random()
@@ -153,7 +175,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadNewDish(callBack: (dishes: List<Dish>, likes: List<Int>) -> Unit){
-        var dish: Dish = dishes.maxBy { x -> x.id }
+        var dish: Dish = dishes!!.maxBy { x -> x.id }
         var likes: List<Like> = listOf()
 
         lifecycleScope.launch {

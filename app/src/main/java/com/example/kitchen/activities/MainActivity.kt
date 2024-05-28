@@ -2,18 +2,21 @@ package com.example.kitchen.activities
 
 import android.os.Bundle
 import android.view.View.INVISIBLE
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.lifecycleScope
 import com.example.kitchen.R
 import com.example.kitchen.databinding.ActivityMainBinding
 import com.example.kitchen.ui.home.HomeFragment
 import com.example.kitchen.ui.profile.ProfileFragment
 import com.example.kitchen.ui.search.SearchFragment
 import com.google.android.material.navigation.NavigationView.VISIBLE
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,6 +32,10 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
+        val onLoadedCallBack = {
+            setButtonClickAccess(true)
+        }
+
         binding.bgButtonHome.setOnClickListener {
             if (currentFragmentId == R.id.button_home)
                 return@setOnClickListener
@@ -37,7 +44,9 @@ class MainActivity : AppCompatActivity() {
 
             navigationChange(R.id.button_home)
 
-            loadFragment(HomeFragment(), false)
+            setButtonClickAccess(false)
+
+            loadFragment(HomeFragment(onLoadedCallBack), false)
         }
 
         binding.bgButtonSearch.setOnClickListener {
@@ -48,7 +57,7 @@ class MainActivity : AppCompatActivity() {
 
             navigationChange(R.id.button_search)
 
-            loadFragment(SearchFragment(), false)
+            loadFragment(SearchFragment(onLoadedCallBack), false)
         }
 
         binding.bgButtonProfile.setOnClickListener {
@@ -59,11 +68,24 @@ class MainActivity : AppCompatActivity() {
 
             navigationChange(R.id.button_profile)
 
-            loadFragment(ProfileFragment(), false)
+            loadFragment(ProfileFragment(onLoadedCallBack), false)
         }
 
         currentFragmentId = R.id.button_home
-        loadFragment(HomeFragment(), true)
+        loadFragment(HomeFragment(onLoadedCallBack), true)
+    }
+
+    private fun setButtonClickAccess(status: Boolean){
+        if (status){
+            binding.bgButtonSearch.isClickable = true
+            binding.bgButtonHome.isClickable = true
+            binding.bgButtonProfile.isClickable = true
+        }
+        else{
+            binding.bgButtonSearch.isClickable = false
+            binding.bgButtonHome.isClickable = false
+            binding.bgButtonProfile.isClickable = false
+        }
     }
 
     private fun navigationChange(buttonId: Int){

@@ -34,7 +34,7 @@ import com.example.kitchen.supabase.repositories.LikeRepositoryImpl
 import kotlinx.coroutines.launch
 import java.util.Locale
 
-class SearchFragment : Fragment() {
+class SearchFragment constructor(private val onLoaded: () -> Unit) : Fragment() {
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
 
@@ -63,6 +63,8 @@ class SearchFragment : Fragment() {
             this.categories = categories
 
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+
+            onLoaded()
 
             binding.etSearch.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
                 if (!hasFocus){
@@ -103,10 +105,8 @@ class SearchFragment : Fragment() {
                 lifecycleScope.launch {
                     likesCounts[i] = likeRepository.getDishLikes(allDishes[i].id).count()
                 }.invokeOnCompletion {
-                    if (i == allDishes.count() - 1){
+                    if (i == allDishes.count() - 1)
                         callback(allDishes, likesCounts.toList(), categories)
-                        binding.etSearch.setText("${binding.etSearch.text}1")
-                    }
                 }
             }
         }

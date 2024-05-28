@@ -10,18 +10,18 @@ import com.example.kitchen.activities.AuthActivity
 import com.example.kitchen.databinding.FragmentProfileBinding
 import com.example.kitchen.sqlite.PreferencesRepository
 
-class ProfileFragment : Fragment() {
+class ProfileFragment constructor(private val onLoaded: () -> Unit) : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
 
-        binding.textProfile.text = "This is Profile Page!!!"
-
-        binding.buttonExit.setOnClickListener {
+        binding.ivProfileExit.setOnClickListener {
             exitProfile()
         }
+
+        onLoaded()
 
         return binding.root
     }
