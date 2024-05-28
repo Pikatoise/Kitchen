@@ -103,8 +103,10 @@ class SearchFragment : Fragment() {
                 lifecycleScope.launch {
                     likesCounts[i] = likeRepository.getDishLikes(allDishes[i].id).count()
                 }.invokeOnCompletion {
-                    if (likesCounts.count() == allDishes.count())
+                    if (i == allDishes.count() - 1){
                         callback(allDishes, likesCounts.toList(), categories)
+                        binding.etSearch.setText("${binding.etSearch.text}1")
+                    }
                 }
             }
         }
