@@ -7,10 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.example.kitchen.DownloadImageTask
 import com.example.kitchen.activities.AuthActivity
 import com.example.kitchen.activities.DishActivity
+import com.example.kitchen.activities.UserFavoritesActivity
+import com.example.kitchen.activities.UserLikesActivity
 import com.example.kitchen.databinding.FragmentProfileBinding
 import com.example.kitchen.lists.DishesAdapter
 import com.example.kitchen.models.Dish
@@ -53,6 +56,18 @@ class ProfileFragment constructor(private val onLoaded: () -> Unit) : Fragment()
             WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
             WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
         )
+
+        binding.mcvProfileFavorites.setOnClickListener {
+            val intent = Intent(this.requireContext(), UserFavoritesActivity::class.java)
+
+            startActivity(intent)
+        }
+
+        binding.mcvProfileLikes.setOnClickListener {
+            val intent = Intent(this.requireContext(), UserLikesActivity::class.java)
+
+            startActivity(intent)
+        }
 
         loadUserDataAndDishes{dishes, likes ->
             if (dishes.isEmpty())
@@ -105,7 +120,7 @@ class ProfileFragment constructor(private val onLoaded: () -> Unit) : Fragment()
 
             likesCounts = IntArray(userDishes.count())
 
-            for(i in 0..userDishes.count() - 1){
+            for(i in 0 until userDishes.count()){
                 lifecycleScope.launch {
                     likesCounts[i] = likeRepository.getDishLikes(userDishes[i].id).count()
                 }.invokeOnCompletion {

@@ -16,6 +16,12 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".activities.UserLikesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.UserFavoritesActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.DishActivity"
             android:exported="false" />
         <activity
