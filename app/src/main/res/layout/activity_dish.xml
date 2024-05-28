@@ -273,17 +273,30 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/mcv_roma_divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/main"
+                    app:strokeWidth="2dp"
+                    app:cardCornerRadius="100dp"
+                    android:layout_marginTop="30dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/mcv_dish_detailed_ingredient_container"/>
+
                 <TextView
                     android:id="@+id/tv_dish_detailed_category"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
+                    android:layout_marginTop="15dp"
                     tools:text="Выпечка"
                     android:textSize="28sp"
                     android:lineSpacingExtra="8dp"
                     android:letterSpacing="0.01"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/mcv_dish_detailed_ingredient_container"/>
+                    app:layout_constraintTop_toBottomOf="@id/mcv_roma_divider"/>
 
                 <TextView
                     android:id="@+id/tv_dish_detailed_recipe"
