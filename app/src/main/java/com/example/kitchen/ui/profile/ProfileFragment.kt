@@ -120,6 +120,12 @@ class ProfileFragment constructor(private val onLoaded: () -> Unit) : Fragment()
 
             likesCounts = IntArray(userDishes.count())
 
+            if (userDishes.isEmpty()){
+                binding.tvProfileDishLoading.text = "Пусто"
+                callback(userDishes,likesCounts.toList())
+                return@invokeOnCompletion
+            }
+
             for(i in 0 until userDishes.count()){
                 lifecycleScope.launch {
                     likesCounts[i] = likeRepository.getDishLikes(userDishes[i].id).count()
