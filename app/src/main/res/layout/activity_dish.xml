@@ -275,7 +275,7 @@
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/mcv_roma_divider"
-                    android:layout_width="100dp"
+                    android:layout_width="match_parent"
                     android:layout_height="2dp"
                     app:cardElevation="0dp"
                     app:strokeColor="@color/main"
