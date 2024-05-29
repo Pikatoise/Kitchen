@@ -32,10 +32,6 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
-        val onLoadedCallBack = {
-            setButtonClickAccess(true)
-        }
-
         binding.bgButtonHome.setOnClickListener {
             if (currentFragmentId == R.id.button_home)
                 return@setOnClickListener
@@ -44,9 +40,7 @@ class MainActivity : AppCompatActivity() {
 
             navigationChange(R.id.button_home)
 
-            setButtonClickAccess(false)
-
-            loadFragment(HomeFragment(onLoadedCallBack), false)
+            loadFragment(HomeFragment(), false)
         }
 
         binding.bgButtonSearch.setOnClickListener {
@@ -57,7 +51,7 @@ class MainActivity : AppCompatActivity() {
 
             navigationChange(R.id.button_search)
 
-            loadFragment(SearchFragment(onLoadedCallBack), false)
+            loadFragment(SearchFragment(), false)
         }
 
         binding.bgButtonProfile.setOnClickListener {
@@ -68,24 +62,11 @@ class MainActivity : AppCompatActivity() {
 
             navigationChange(R.id.button_profile)
 
-            loadFragment(ProfileFragment(onLoadedCallBack), false)
+            loadFragment(ProfileFragment(), false)
         }
 
         currentFragmentId = R.id.button_home
-        loadFragment(HomeFragment(onLoadedCallBack), true)
-    }
-
-    private fun setButtonClickAccess(status: Boolean){
-        if (status){
-            binding.bgButtonSearch.isClickable = true
-            binding.bgButtonHome.isClickable = true
-            binding.bgButtonProfile.isClickable = true
-        }
-        else{
-            binding.bgButtonSearch.isClickable = false
-            binding.bgButtonHome.isClickable = false
-            binding.bgButtonProfile.isClickable = false
-        }
+        loadFragment(HomeFragment(), true)
     }
 
     private fun navigationChange(buttonId: Int){

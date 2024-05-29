@@ -28,7 +28,7 @@ import com.example.kitchen.supabase.repositories.LikeRepositoryImpl
 import com.example.kitchen.supabase.repositories.ProfileRepositoryImpl
 import kotlinx.coroutines.launch
 
-class ProfileFragment constructor(private val onLoaded: () -> Unit) : Fragment() {
+class ProfileFragment constructor() : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
 
@@ -51,11 +51,6 @@ class ProfileFragment constructor(private val onLoaded: () -> Unit) : Fragment()
         profileId = preferencesRepository.getProfileId()
         if (profileId <= 0)
             return binding.root
-
-        requireActivity().window.setFlags(
-            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-        )
 
         binding.mcvProfileFavorites.setOnClickListener {
             val intent = Intent(this.requireContext(), UserFavoritesActivity::class.java)
@@ -85,8 +80,6 @@ class ProfileFragment constructor(private val onLoaded: () -> Unit) : Fragment()
             }
 
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-
-            onLoaded()
         }
 
         binding.ivProfileExit.setOnClickListener {
@@ -105,6 +98,9 @@ class ProfileFragment constructor(private val onLoaded: () -> Unit) : Fragment()
             userDishes = dishRepository.getProfileDishes(profileId)
             profile = profileRepository.getProfile(profileId)
         }.invokeOnCompletion {
+            if (_binding == null)
+                return@invokeOnCompletion
+
             if (profile != null)
                 binding.tvProfileName.text = profile!!.name
             else
@@ -130,6 +126,9 @@ class ProfileFragment constructor(private val onLoaded: () -> Unit) : Fragment()
                 lifecycleScope.launch {
                     likesCounts[i] = likeRepository.getDishLikes(userDishes[i].id).count()
                 }.invokeOnCompletion {
+                    if (_binding == null)
+                        return@invokeOnCompletion
+
                     if (i == userDishes.count() - 1)
                         callback(userDishes, likesCounts.toList())
                 }

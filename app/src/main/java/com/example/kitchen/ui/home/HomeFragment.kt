@@ -31,90 +31,64 @@ import kotlinx.coroutines.DisposableHandle
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class HomeFragment constructor(private val onLoaded: () -> Unit) : Fragment() {
+class HomeFragment constructor() : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private lateinit var dishRepository: DishRepository
     private lateinit var likeRepository: LikeRepository
     private var dishes: List<Dish>? = null
-    private var loadedElements = 0
-    private var loadingElementsCount = 3;
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        requireActivity().window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-        loadedElements = 0
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-            _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        dishRepository = DishRepositoryImpl(SupabaseModule.provideSupabaseDatabase())
+        likeRepository = LikeRepositoryImpl(SupabaseModule.provideSupabaseDatabase())
 
-            dishRepository = DishRepositoryImpl(SupabaseModule.provideSupabaseDatabase())
-            likeRepository = LikeRepositoryImpl(SupabaseModule.provideSupabaseDatabase())
+        loadDishes().invokeOnCompletion {
+            if (_binding == null)
+                return@invokeOnCompletion
 
-            loadDishes().invokeOnCompletion {
-                if (dishes == null)
-                    return@invokeOnCompletion
+            if (dishes!!.isEmpty()) {
+                binding.tvHomeRandomLoading.visibility = VISIBLE
+                binding.tvHomeNewLoading.visibility = VISIBLE
+                binding.tvHomePopularLoading.visibility = VISIBLE
 
-                if (dishes!!.isEmpty()) {
-                    binding.tvHomeRandomLoading.visibility = VISIBLE
-                    binding.tvHomeNewLoading.visibility = VISIBLE
-                    binding.tvHomePopularLoading.visibility = VISIBLE
-
-                    return@invokeOnCompletion
-                }
-                else {
-                    binding.tvHomeNewLoading.visibility = INVISIBLE
-                    binding.tvHomeRandomLoading.visibility = INVISIBLE
-                    binding.tvHomePopularLoading.visibility = INVISIBLE
-                }
-
-                val clickCallBack: (dishId: Int) -> Unit = {
-                    val intent = Intent(this.requireContext(), DishActivity::class.java)
-
-                    intent.putExtra("dishId", it)
-
-                    startActivity(intent)
-                }
-
-                loadRandomDishes { dishes, likes ->
-                    binding.rvHomeRandomDishes.adapter = DishesAdapter(dishes, likes, clickCallBack)
-
-                    binding.rvHomeRandomDishes.addItemDecoration(CirclePagerIndicatorDecoration())
-
-                    loadedElements += 1
-
-                    if (loadedElements == loadingElementsCount){
-                        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-                        onLoaded()
-                    }
-                }
-
-                loadNewDish { dishes, likes ->
-                    binding.rvHomeNewDishes.adapter = DishesAdapter(dishes, likes, clickCallBack)
-
-                    loadedElements += 1
-
-                    if (loadedElements == loadingElementsCount){
-                        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-                        onLoaded()
-                    }
-                }
-
-                loadPopularDish { dishes, likes ->
-                    binding.rvHomePopularDishes.adapter = DishesAdapter(dishes, likes, clickCallBack)
-
-                    loadedElements += 1
-
-                    if (loadedElements == loadingElementsCount){
-                        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-                        onLoaded()
-                    }
-                }
+                return@invokeOnCompletion
+            }
+            else {
+                binding.tvHomeNewLoading.visibility = INVISIBLE
+                binding.tvHomeRandomLoading.visibility = INVISIBLE
+                binding.tvHomePopularLoading.visibility = INVISIBLE
             }
 
-            binding.tvHomeAllDishes.setOnClickListener {
-                val i = Intent(this.requireContext(), AllDishesActivity::class.java)
+            val clickCallBack: (dishId: Int) -> Unit = {
+                val intent = Intent(this.requireContext(), DishActivity::class.java)
 
-                startActivity(i)
+                intent.putExtra("dishId", it)
+
+                startActivity(intent)
             }
+
+            loadRandomDishes { dishes, likes ->
+                binding.rvHomeRandomDishes.adapter = DishesAdapter(dishes, likes, clickCallBack)
+
+                binding.rvHomeRandomDishes.addItemDecoration(CirclePagerIndicatorDecoration())
+            }
+
+            loadNewDish { dishes, likes ->
+                binding.rvHomeNewDishes.adapter = DishesAdapter(dishes, likes, clickCallBack)
+            }
+
+            loadPopularDish { dishes, likes ->
+                binding.rvHomePopularDishes.adapter = DishesAdapter(dishes, likes, clickCallBack)
+            }
+        }
+
+        binding.tvHomeAllDishes.setOnClickListener {
+            val i = Intent(this.requireContext(), AllDishesActivity::class.java)
+
+            startActivity(i)
+        }
 
         return binding.root
     }
@@ -141,6 +115,9 @@ class HomeFragment constructor(private val onLoaded: () -> Unit) : Fragment() {
                 lifecycleScope.launch {
                     dishLikes = likeRepository.getDishLikes(it.id)
                 }.invokeOnCompletion {
+                    if (_binding == null)
+                        return@invokeOnCompletion
+
                     selectedDishesLikesCount.add(dishLikes.count())
 
                     if (selectedDishesLikesCount.count() == dishes!!.count())
@@ -165,6 +142,9 @@ class HomeFragment constructor(private val onLoaded: () -> Unit) : Fragment() {
                 secondDishLikesCount = likeRepository.getDishLikes(selectedDishes[1].id).count()
                 thirdDishLikesCount = likeRepository.getDishLikes(selectedDishes[2].id).count()
             }.invokeOnCompletion {
+                if (_binding == null)
+                    return@invokeOnCompletion
+
                 selectedDishesLikesCount.add(firstDishLikesCount)
                 selectedDishesLikesCount.add(secondDishLikesCount)
                 selectedDishesLikesCount.add(thirdDishLikesCount)
@@ -181,6 +161,9 @@ class HomeFragment constructor(private val onLoaded: () -> Unit) : Fragment() {
         lifecycleScope.launch {
             likes = likeRepository.getDishLikes(dish.id)
         }.invokeOnCompletion {
+            if (_binding == null)
+                return@invokeOnCompletion
+
             callBack(List<Dish>(1) { dish }, List<Int>(1)  { likes.count() })
         }
     }
@@ -192,6 +175,9 @@ class HomeFragment constructor(private val onLoaded: () -> Unit) : Fragment() {
         lifecycleScope.launch {
             likes = likeRepository.getAllLikes()
         }.invokeOnCompletion {
+            if (_binding == null)
+                return@invokeOnCompletion
+
             likes.forEach {
                 if (dishesAndLikesCount.containsKey(it.dishId))
                     dishesAndLikesCount[it.dishId] = dishesAndLikesCount[it.dishId]!! + 1
@@ -204,10 +190,12 @@ class HomeFragment constructor(private val onLoaded: () -> Unit) : Fragment() {
             lifecycleScope.launch {
                 dish = dishRepository.getDish(popularestDish.key)
             }.invokeOnCompletion {
+                if (_binding == null)
+                    return@invokeOnCompletion
+
                 if (dish != null)
                     callBack(List<Dish>(1) { dish!! }, List<Int>(1)  { popularestDish.value })
             }
-
         }
     }
 

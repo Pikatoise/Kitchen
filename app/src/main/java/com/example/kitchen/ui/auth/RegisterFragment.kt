@@ -71,6 +71,9 @@ class RegisterFragment @Inject constructor() : Fragment() {
             lifecycleScope.launch {
                 user = userRepository.getUserByLogin(typedLogin)
             }.invokeOnCompletion {
+                if (_binding == null)
+                    return@invokeOnCompletion
+
                 if (user != null){
                     progressDialog.dismiss()
                     Toast.makeText(activity, "Логин занят!", Toast.LENGTH_SHORT).show()
@@ -80,13 +83,22 @@ class RegisterFragment @Inject constructor() : Fragment() {
                         val newUser = User(-1, typedLogin, typedPassword)
                         userRepository.createUser(newUser)
                     }.invokeOnCompletion {
+                        if (_binding == null)
+                            return@invokeOnCompletion
+
                         lifecycleScope.launch {
                             user = null
                             user = userRepository.getUserByLogin(typedLogin)
                         }.invokeOnCompletion {
+                            if (_binding == null)
+                                return@invokeOnCompletion
+
                             lifecycleScope.launch {
                                 profileRepository.createUserProfile(user!!.id)
                             }.invokeOnCompletion {
+                                if (_binding == null)
+                                    return@invokeOnCompletion
+
                                 progressDialog.dismiss()
                                 toLogin()
                             }

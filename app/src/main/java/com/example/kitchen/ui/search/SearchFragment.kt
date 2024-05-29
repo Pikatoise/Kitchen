@@ -34,7 +34,7 @@ import com.example.kitchen.supabase.repositories.LikeRepositoryImpl
 import kotlinx.coroutines.launch
 import java.util.Locale
 
-class SearchFragment constructor(private val onLoaded: () -> Unit) : Fragment() {
+class SearchFragment : Fragment() {
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
 
@@ -53,19 +53,10 @@ class SearchFragment constructor(private val onLoaded: () -> Unit) : Fragment() 
         categoryRepository = CategoryRepositoryImpl(provider)
         likeRepository = LikeRepositoryImpl(provider)
 
-        requireActivity().window.setFlags(
-            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-        )
-
         loadAllData{dishes, likes, categories ->
             this.dishes = dishes
             this.likes = likes
             this.categories = categories
-
-            requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-
-            onLoaded()
 
             binding.etSearch.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
                 if (!hasFocus){
@@ -100,12 +91,18 @@ class SearchFragment constructor(private val onLoaded: () -> Unit) : Fragment() 
             allDishes = dishRepository.getAllDishes()
             categories = categoryRepository.getAllCategories()
         }.invokeOnCompletion {
+            if (_binding == null)
+                return@invokeOnCompletion
+
             likesCounts = IntArray(allDishes.count())
 
             for(i in 0..allDishes.count() - 1){
                 lifecycleScope.launch {
                     likesCounts[i] = likeRepository.getDishLikes(allDishes[i].id).count()
                 }.invokeOnCompletion {
+                    if (_binding == null)
+                        return@invokeOnCompletion
+
                     if (i == allDishes.count() - 1)
                         callback(allDishes, likesCounts.toList(), categories)
                 }

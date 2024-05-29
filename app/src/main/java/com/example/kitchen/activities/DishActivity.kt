@@ -3,7 +3,6 @@ package com.example.kitchen.activities
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.ListView
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -208,6 +207,9 @@ class DishActivity : AppCompatActivity() {
                 profile = profileRepository.getProfile(profileId)
                 profileFavorites = favoriteRepository.getProfileFavorites(profileId)
             }.invokeOnCompletion {
+                if (binding == null || profile == null || dishCategory == null)
+                    return@invokeOnCompletion
+
                 if (dishCategory != null)
                     binding.tvDishDetailedCategory.text = dishCategory!!.name
                 else

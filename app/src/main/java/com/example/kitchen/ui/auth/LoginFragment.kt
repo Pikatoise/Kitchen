@@ -63,6 +63,9 @@ class LoginFragment @Inject constructor() : Fragment() {
             lifecycleScope.launch {
                 user = userRepository.getUserByLogin(typedLogin)
             }.invokeOnCompletion {
+                if (_binding == null)
+                    return@invokeOnCompletion
+
                 if (user == null){
                     progressDialog.dismiss()
                     Toast.makeText(activity, "Пользователь не найден!", Toast.LENGTH_SHORT).show()
@@ -74,6 +77,9 @@ class LoginFragment @Inject constructor() : Fragment() {
                         lifecycleScope.launch {
                             profile = profileRepository.getUserProfile(user!!.id)
                         }.invokeOnCompletion {
+                            if (_binding == null)
+                                return@invokeOnCompletion
+
                             if (profile == null){
                                 progressDialog.dismiss()
                                 Toast.makeText(activity,"Ошибка. Профиль не найден!",Toast.LENGTH_SHORT).show()
