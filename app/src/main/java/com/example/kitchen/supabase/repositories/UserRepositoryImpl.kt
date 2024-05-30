@@ -46,7 +46,17 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateUser(id: Int, name: String, password: String) {
-
+    override suspend fun updateUserPassword(userId: Int, newPassword: String) {
+        withContext(Dispatchers.IO){
+            postgrest.from("Users").update(
+                {
+                    set("Password", newPassword)
+                }
+            ) {
+                filter {
+                    eq("Id", userId)
+                }
+            }
+        }
     }
 }

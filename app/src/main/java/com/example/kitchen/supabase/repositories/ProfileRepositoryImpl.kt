@@ -5,6 +5,7 @@ import com.example.kitchen.models.Profile
 import com.example.kitchen.supabase.interfaces.ProfileRepository
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.query.Columns
+import io.github.jan.supabase.supabaseJson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -44,6 +45,20 @@ class ProfileRepositoryImpl @Inject constructor(
             true
         } catch (e: java.lang.Exception) {
             throw e
+        }
+    }
+
+    override suspend fun updateProfileName(profileId: Int, newName: String) {
+        withContext(Dispatchers.IO){
+            postgrest.from("Profiles").update(
+                {
+                    set("Name", newName)
+                }
+            ) {
+                filter {
+                    eq("Id", profileId)
+                }
+            }
         }
     }
 }

@@ -40,9 +40,9 @@ class RegisterFragment @Inject constructor() : Fragment() {
         }
 
         binding.buttonRegRegister.setOnClickListener {
-            val typedLogin = binding.etRegLogin.text.toString()
-            val typedPassword = binding.etRegPassword.text.toString()
-            val typedPasswordConfirm = binding.etRegPasswordConfirm.text.toString()
+            val typedLogin = binding.etRegLogin.text.toString().trim()
+            val typedPassword = binding.etRegPassword.text.toString().trim()
+            val typedPasswordConfirm = binding.etRegPasswordConfirm.text.toString().trim()
 
             if (typedLogin.length < 4){
                 Toast.makeText(activity,"Логин слишком короткий!", Toast.LENGTH_SHORT).show()

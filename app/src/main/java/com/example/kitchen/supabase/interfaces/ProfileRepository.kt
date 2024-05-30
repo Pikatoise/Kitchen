@@ -8,4 +8,6 @@ interface ProfileRepository {
     suspend fun getProfile(id: Int): Profile?
 
     suspend fun createUserProfile(userId: Int): Boolean
+
+    suspend fun updateProfileName(profileId: Int, newName: String)
 }

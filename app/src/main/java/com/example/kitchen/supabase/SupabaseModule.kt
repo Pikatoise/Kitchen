@@ -38,8 +38,8 @@ object SupabaseModule {
 
     @Provides
     @Singleton
-    fun provideSupabaseStorage(client: SupabaseClient): Storage {
-        return client.storage
+    fun provideSupabaseStorage(): Storage {
+        return provideSupabaseClient().storage
     }
 
 }
