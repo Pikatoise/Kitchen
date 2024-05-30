@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.kitchen.DownloadImageTask
 import com.example.kitchen.R
+import com.example.kitchen.activities.AddDishActivity
 import com.example.kitchen.activities.AuthActivity
 import com.example.kitchen.activities.DishActivity
 import com.example.kitchen.activities.UserFavoritesActivity
@@ -88,6 +89,12 @@ class ProfileFragment constructor() : Fragment() {
 
         binding.mcvProfileLikes.setOnClickListener {
             val intent = Intent(this.requireContext(), UserLikesActivity::class.java)
+
+            startActivity(intent)
+        }
+
+        binding.ivProfileAddRecipe.setOnClickListener {
+            val intent = Intent(this.requireContext(), AddDishActivity::class.java)
 
             startActivity(intent)
         }

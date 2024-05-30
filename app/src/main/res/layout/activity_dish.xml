@@ -221,7 +221,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginVertical="20dp"
                             android:layout_marginStart="25dp"
-                            android:text="Ингридиенты"
+                            android:text="Ингредиенты"
                             android:textSize="18sp"
                             android:textColor="@color/black"
                             android:textStyle="bold"/>
@@ -308,7 +308,7 @@
 Являясь одной из самых распространённых в мире сельскохозяйственных культур, рис занимает главенствующую позицию в национальной кухне сотен народов. В России до XIX века рис называли «сарацинское зерно». Более половины населения Земли питаются в основном именно рисом, что делает эту сельскохозяйственную культуру важнейшей на планете. В некоторых странах Азии из этого растения готовят такие напитки, как вино и пиво. Из рисовых зерён делают так называемую съедобную рисовую бумагу, применяемую в кондитерском деле."
                     android:textColor="@color/black"
                     android:textSize="18sp"
-                    android:lineSpacingExtra="8dp"
+                    android:lineSpacingExtra="10dp"
                     android:letterSpacing="0.01"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
