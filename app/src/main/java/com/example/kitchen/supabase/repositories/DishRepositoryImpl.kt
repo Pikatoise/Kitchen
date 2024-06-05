@@ -1,5 +1,6 @@
 package com.example.kitchen.supabase.repositories
 
+import com.example.kitchen.dtos.DishDto
 import com.example.kitchen.models.Dish
 import com.example.kitchen.supabase.interfaces.DishRepository
 import io.github.jan.supabase.postgrest.Postgrest
@@ -46,6 +47,28 @@ class DishRepositoryImpl @Inject constructor(
                 }
                 order(column = "Id", order = Order.DESCENDING)
             }.decodeList<Dish>()
+        }
+    }
+
+    override suspend fun addDish(dto: DishDto): Dish? {
+        return withContext(Dispatchers.IO){
+            postgrest.from("Dishes").insert(dto) {
+                select()
+            }.decodeSingleOrNull()
+        }
+    }
+
+    override suspend fun updateDishImage(dishId: Int, path: String) {
+        withContext(Dispatchers.IO){
+            postgrest.from("Dishes").update(
+                {
+                    set("Image", path)
+                }
+            ) {
+                filter {
+                    eq("Id", dishId)
+                }
+            }
         }
     }
 }

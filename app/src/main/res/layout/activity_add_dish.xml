@@ -87,7 +87,9 @@
                 <ImageView
                     android:id="@+id/iv_add_dish_image"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    tools:src="@drawable/test_dish"/>
             </com.google.android.material.card.MaterialCardView>
 
             <TextView
@@ -119,7 +121,7 @@
                 android:id="@+id/mcv_add_dish_load_photo"
                 android:layout_width="130dp"
                 android:layout_height="35dp"
-                app:cardCornerRadius="100dp"
+                app:cardCornerRadius="23dp"
                 app:strokeColor="@color/main"
                 app:cardElevation="0dp"
                 app:strokeWidth="2dp"
@@ -143,7 +145,7 @@
                 android:id="@+id/mcv_add_dish_cooking_time"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
-                app:cardCornerRadius="100dp"
+                app:cardCornerRadius="25dp"
                 app:strokeColor="@color/main"
                 app:cardElevation="0dp"
                 app:strokeWidth="2dp"
@@ -154,7 +156,8 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_height="match_parent"
                     android:layout_width="match_parent"
-                    android:paddingHorizontal="24dp">
+                    android:paddingStart="24dp"
+                    android:paddingEnd="12dp">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -174,11 +177,12 @@
                         android:textColor="@color/black"
                         android:textSize="30sp"
                         android:textStyle="bold"
+                        android:paddingHorizontal="10dp"
                         android:gravity="center_vertical"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        android:layout_marginEnd="60dp"/>
+                        android:layout_marginEnd="70dp"/>
                     
                     <EditText
                         android:id="@+id/et_add_dish_cooking_time"
@@ -200,8 +204,10 @@
                         android:layout_height="match_parent"
                         android:text="+"
                         android:textColor="@color/black"
+                        android:paddingEnd="10dp"
+                        android:paddingStart="10dp"
                         android:textSize="30sp"
-                        android:layout_marginStart="5dp"
+                        android:layout_marginStart="0dp"
                         android:gravity="center"
                         app:layout_constraintStart_toEndOf="@id/et_add_dish_cooking_time"
                         app:layout_constraintTop_toTopOf="parent"
@@ -213,7 +219,7 @@
                 android:id="@+id/mcv_add_dish_portion_count"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
-                app:cardCornerRadius="100dp"
+                app:cardCornerRadius="25dp"
                 app:strokeColor="@color/main"
                 app:cardElevation="0dp"
                 app:strokeWidth="2dp"
@@ -224,7 +230,8 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_height="match_parent"
                     android:layout_width="match_parent"
-                    android:paddingHorizontal="24dp">
+                    android:paddingStart="24dp"
+                    android:paddingEnd="12dp">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -244,11 +251,12 @@
                         android:textColor="@color/black"
                         android:textSize="30sp"
                         android:textStyle="bold"
+                        android:paddingHorizontal="10dp"
                         android:gravity="center"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        android:layout_marginEnd="60dp"/>
+                        android:layout_marginEnd="70dp"/>
 
                     <EditText
                         android:id="@+id/et_add_dish_portion_count"
@@ -270,9 +278,10 @@
                         android:layout_height="match_parent"
                         android:text="+"
                         android:textColor="@color/black"
+                        android:paddingEnd="10dp"
+                        android:paddingStart="10dp"
                         android:textSize="30sp"
                         android:gravity="center"
-                        android:layout_marginStart="5dp"
                         app:layout_constraintStart_toEndOf="@id/et_add_dish_portion_count"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent" />
@@ -401,6 +410,7 @@
                         app:layout_constraintTop_toTopOf="parent"/>
 
                     <LinearLayout
+                        android:id="@+id/ll_add_dish_category_container"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         app:layout_constraintEnd_toEndOf="parent"

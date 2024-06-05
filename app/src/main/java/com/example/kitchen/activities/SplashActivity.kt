@@ -1,9 +1,12 @@
 package com.example.kitchen.activities
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.example.kitchen.NetworkUtils
 import com.example.kitchen.databinding.ActivitySplashBinding
 import com.example.kitchen.sqlite.PreferencesRepository
 
@@ -23,21 +26,40 @@ class SplashActivity : AppCompatActivity() {
         binding.ivLogo.animate().setDuration(1500).alpha(1f ).withEndAction {
             val profileId = PreferencesRepository(this).getProfileId()
 
-            if (profileId == -1){
-                val i = Intent(this, AuthActivity::class.java)
+            if (NetworkUtils.isNetworkConnected(this)){
+                if (profileId == -1){
+                    val i = Intent(this, AuthActivity::class.java)
 
-                startActivity(i)
+                    startActivity(i)
+                }
+                else{
+                    val i = Intent(this, MainActivity::class.java)
+
+                    startActivity(i)
+                }
+
+
+                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out)
+
+                finish()
             }
             else{
-                val i = Intent(this, MainActivity::class.java)
+                val dialogClickListener = DialogInterface.OnClickListener { dialog, which ->
+                    when (which) {
+                        DialogInterface.BUTTON_POSITIVE -> {
+                            finish()
+                        }
+                        DialogInterface.BUTTON_NEGATIVE -> {}
+                    }
+                }
 
-                startActivity(i)
+                val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+
+                builder
+                    .setMessage("Отсутсвует подключение к интернету")
+                    .setPositiveButton("Ок", dialogClickListener)
+                    .show()
             }
-
-
-            overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out)
-
-            finish()
         }
     }
 }

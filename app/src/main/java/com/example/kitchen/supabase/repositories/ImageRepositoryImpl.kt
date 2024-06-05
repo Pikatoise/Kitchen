@@ -26,4 +26,14 @@ class ImageRepositoryImpl @Inject constructor(
             bucket.from("kitchen_user_avatars").delete(name)
         }
     }
+
+    override suspend fun loadDishImage(name: String, image: ByteArray) {
+        withContext(Dispatchers.IO) {
+            bucket.from("kitchen_dish_image").upload(
+                path = name,
+                data = image,
+                upsert = true
+            )
+        }
+    }
 }

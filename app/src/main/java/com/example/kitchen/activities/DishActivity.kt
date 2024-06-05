@@ -200,11 +200,13 @@ class DishActivity : AppCompatActivity() {
             var dishLikes: List<Like> = listOf()
             var dishCategory: DishCategory? = null
             var profile: Profile? = null
+            var profileAuthor: Profile? = null
             var profileFavorites: List<Favorite> = listOf()
             lifecycleScope.launch {
                 dishLikes = likeRepository.getDishLikes(dish!!.id)
                 dishCategory = categoryRepository.getCategory(dish!!.categoryId)
                 profile = profileRepository.getProfile(profileId)
+                profileAuthor = profileRepository.getProfile(dish!!.profileId)
                 profileFavorites = favoriteRepository.getProfileFavorites(profileId)
             }.invokeOnCompletion {
                 if (binding == null || profile == null || dishCategory == null)
@@ -215,15 +217,15 @@ class DishActivity : AppCompatActivity() {
                 else
                     binding.tvDishDetailedCategory.text = "Блюдо"
 
-                binding.tvDishDetailedNickLetter.text = profile!!.name[0].toString()
+                binding.tvDishDetailedNickLetter.text = profileAuthor!!.name[0].toString()
 
-                if (profile!!.avatar.isNotEmpty())
+                if (profileAuthor!!.avatar.isNotEmpty())
                     DownloadImageTask(binding.ivDishDetailedAvatar)
                         .execute(
                             "https://gkeqyqnfnwgcbpgbnxkq.supabase.co/storage/v1/object/public/kitchen_user_avatars/${profile!!.avatar}"
                         )
 
-                binding.tvDishDetailedNick.text = profile!!.name
+                binding.tvDishDetailedNick.text = profileAuthor!!.name
 
                 binding.tvDishDetailedLikeCount.text = dishLikes.count().toString()
 

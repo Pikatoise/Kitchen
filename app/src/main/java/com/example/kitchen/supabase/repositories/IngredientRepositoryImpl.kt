@@ -1,5 +1,7 @@
 package com.example.kitchen.supabase.repositories
 
+import com.example.kitchen.dtos.IngredientDto
+import com.example.kitchen.dtos.ProfileDto
 import com.example.kitchen.models.Ingredient
 import com.example.kitchen.models.Like
 import com.example.kitchen.supabase.interfaces.IngredientRepository
@@ -18,6 +20,12 @@ class IngredientRepositoryImpl @Inject constructor(
                     eq("DishId", dishId)
                 }
             }.decodeList<Ingredient>()
+        }
+    }
+
+    override suspend fun addIngredient(dto: IngredientDto) {
+        withContext(Dispatchers.IO) {
+            postgrest.from("Ingredients").insert(dto)
         }
     }
 }

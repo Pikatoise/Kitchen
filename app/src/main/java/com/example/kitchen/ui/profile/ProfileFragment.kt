@@ -1,6 +1,5 @@
 package com.example.kitchen.ui.profile
 
-import android.R.attr.previewImage
 import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
@@ -14,7 +13,6 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
@@ -59,6 +57,7 @@ class ProfileFragment constructor() : Fragment() {
     private lateinit var preferencesRepository: PreferencesRepository
     private var profileId = 0
     private var profile: Profile? = null
+    private var isNeedUpdateDishes = false
 
     private var newAvatar: Uri? = null
     private lateinit var ivNewAvatar: ImageView
@@ -94,6 +93,8 @@ class ProfileFragment constructor() : Fragment() {
         }
 
         binding.ivProfileAddRecipe.setOnClickListener {
+            isNeedUpdateDishes = true
+
             val intent = Intent(this.requireContext(), AddDishActivity::class.java)
 
             startActivity(intent)
@@ -113,8 +114,6 @@ class ProfileFragment constructor() : Fragment() {
                     startActivity(intent)
                 }
             }
-
-            requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
         }
 
         binding.ivProfileExit.setOnClickListener {
@@ -126,6 +125,27 @@ class ProfileFragment constructor() : Fragment() {
         }
 
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (isNeedUpdateDishes)
+            loadUserDataAndDishes{dishes, likes ->
+                if (dishes.isEmpty())
+                    binding.tvProfileDishLoading.text = "Пусто"
+                else{
+                    binding.tvProfileDishLoading.text = ""
+
+                    binding.rvProfileMyDishes.adapter = DishesAdapter(dishes, likes) {
+                        val intent = Intent(this.requireContext(), DishActivity::class.java)
+
+                        intent.putExtra("dishId", it)
+
+                        startActivity(intent)
+                    }
+                }
+            }
     }
 
     private fun loadUserDataAndDishes(callback: (dishes: List<Dish>, likes: List<Int>) -> Unit){
