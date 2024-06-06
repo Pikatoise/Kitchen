@@ -15,4 +15,6 @@ interface DishRepository {
     suspend fun addDish(dto: DishDto): Dish?
 
     suspend fun updateDishImage(dishId: Int, path: String)
+
+    suspend fun getDishesByCategory(categoryId: Int): List<Dish>
 }

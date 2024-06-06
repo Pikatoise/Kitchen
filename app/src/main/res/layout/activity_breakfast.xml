@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.BreakfastActivity">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:scrollbars="none"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/iv_breakfast"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_marginTop="70dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/breakfast"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <TextView
+                android:id="@+id/tv_breakfast_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Курс по простым завтракам: научитесь готовить вкусные и питательные блюда для идеального начала дня. Простые и разнообразные рецепты для ежедневного меню."
+                android:textSize="16sp"
+                android:layout_marginTop="10dp"
+                android:paddingHorizontal="20dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/iv_breakfast"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/mcv_breakfast_roma_divider"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/main"
+                app:strokeWidth="2dp"
+                android:layout_marginHorizontal="30dp"
+                app:cardCornerRadius="10dp"
+                android:layout_marginTop="20dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_breakfast_desc"/>
+
+            <TextView
+                android:id="@+id/tv_breakfast_dishes_loading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Пусто"
+                android:visibility="visible"
+                android:layout_marginTop="50dp"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/mcv_breakfast_roma_divider" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_breakfast_dishes"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginTop="20dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/mcv_breakfast_roma_divider"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:listitem="@layout/dish_item"
+                tools:itemCount="3"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:orientation="vertical"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_breakfast_header"
+        android:layout_width="match_parent"
+        android:layout_height="85dp"
+        android:background="@drawable/shape_header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <ImageView
+            android:id="@+id/iv_breakfast_exit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_exit"
+            android:layout_marginStart="28dp"
+            android:layout_marginBottom="15dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Простые завтраки"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="21dp"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

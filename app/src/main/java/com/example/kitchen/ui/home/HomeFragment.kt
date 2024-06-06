@@ -13,12 +13,17 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.example.kitchen.R
 import com.example.kitchen.activities.AllDishesActivity
+import com.example.kitchen.activities.BreakfastActivity
 import com.example.kitchen.activities.DishActivity
 import com.example.kitchen.activities.MainActivity
+import com.example.kitchen.activities.VegetablesActivity
 import com.example.kitchen.databinding.FragmentHomeBinding
 import com.example.kitchen.lists.DishesAdapter
 import com.example.kitchen.lists.CirclePagerIndicatorDecoration
+import com.example.kitchen.lists.CoursesAdapter
+import com.example.kitchen.models.Course
 import com.example.kitchen.models.Dish
 import com.example.kitchen.models.Like
 import com.example.kitchen.sqlite.PreferencesRepository
@@ -89,6 +94,8 @@ class HomeFragment constructor() : Fragment() {
 
             startActivity(i)
         }
+
+        loadCourses()
 
         return binding.root
     }
@@ -197,6 +204,28 @@ class HomeFragment constructor() : Fragment() {
                     callBack(List<Dish>(1) { dish!! }, List<Int>(1)  { popularestDish.value })
             }
         }
+    }
+
+    private fun loadCourses(){
+        val courses = mutableListOf(
+            Course("Вегетарианство", R.drawable.vegetables) {
+                val intent = Intent(this.requireContext(), VegetablesActivity::class.java)
+
+                startActivity(intent)
+
+            },
+            Course("Простые завтраки", R.drawable.breakfast) {
+                val intent = Intent(this.requireContext(), BreakfastActivity::class.java)
+
+                startActivity(intent)
+            }
+        )
+
+        val adapter = CoursesAdapter(courses)
+
+        binding.rvHomeCourses.adapter = adapter
+
+        binding.tvHomeCoursesLoading.visibility = INVISIBLE
     }
 
     override fun onDestroyView() {

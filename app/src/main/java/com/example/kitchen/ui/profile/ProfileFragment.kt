@@ -45,7 +45,7 @@ import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 
 
-class ProfileFragment constructor() : Fragment() {
+class ProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
 

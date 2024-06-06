@@ -50,6 +50,16 @@ class DishRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getDishesByCategory(categoryId: Int): List<Dish> {
+        return withContext(Dispatchers.IO){
+            postgrest.from("Dishes").select{
+                filter {
+                    eq("CategoryId", categoryId)
+                }
+            }.decodeList<Dish>()
+        }
+    }
+
     override suspend fun addDish(dto: DishDto): Dish? {
         return withContext(Dispatchers.IO){
             postgrest.from("Dishes").insert(dto) {
